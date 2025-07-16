@@ -189,9 +189,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 128740661}
-  _highlight: {fileID: 2135890376}
+  IsOccupied: 0
 --- !u!21 &19631091
 Material:
   serializedVersion: 8
@@ -717,9 +716,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1349009960}
-  _highlight: {fileID: 452395954}
+  IsOccupied: 0
 --- !u!21 &57156997
 Material:
   serializedVersion: 8
@@ -1638,9 +1636,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1900248986}
-  _highlight: {fileID: 1990169010}
+  IsOccupied: 0
 --- !u!1 &124255200
 GameObject:
   m_ObjectHideFlags: 0
@@ -1969,9 +1966,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1100428257}
-  _highlight: {fileID: 34145710}
+  IsOccupied: 0
 --- !u!1 &147743954
 GameObject:
   m_ObjectHideFlags: 0
@@ -2042,9 +2038,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1410070552}
-  _highlight: {fileID: 1475317644}
+  IsOccupied: 0
 --- !u!21 &148643442
 Material:
   serializedVersion: 8
@@ -2668,9 +2663,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 154193521}
-  _highlight: {fileID: 1037331336}
+  IsOccupied: 0
 --- !u!21 &185423988
 Material:
   serializedVersion: 8
@@ -3405,9 +3399,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 777218625}
-  _highlight: {fileID: 2118691461}
+  IsOccupied: 0
 --- !u!1 &225983509
 GameObject:
   m_ObjectHideFlags: 0
@@ -4598,9 +4591,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 86077055}
-  _highlight: {fileID: 1357707041}
+  IsOccupied: 0
 --- !u!21 &388881938
 Material:
   serializedVersion: 8
@@ -5419,9 +5411,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1850463208}
-  _highlight: {fileID: 286094382}
+  IsOccupied: 0
 --- !u!21 &429882347
 Material:
   serializedVersion: 8
@@ -5545,6 +5536,51 @@ Material:
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!1 &444924215
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 444924217}
+  - component: {fileID: 444924216}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &444924216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444924215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4d43eeae82ab0443a45c6584f3bdae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worm: {fileID: 1128069512}
+--- !u!4 &444924217
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 444924215}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.029981, y: -0.0050230026, z: 0.7112179}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &452395954
 GameObject:
   m_ObjectHideFlags: 0
@@ -7041,9 +7077,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 517749669}
-  _highlight: {fileID: 931042785}
+  IsOccupied: 0
 --- !u!1 &556281584
 GameObject:
   m_ObjectHideFlags: 0
@@ -7372,9 +7407,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 853848033}
-  _highlight: {fileID: 299138034}
+  IsOccupied: 0
 --- !u!1 &603326888
 GameObject:
   m_ObjectHideFlags: 0
@@ -7986,9 +8020,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 833371385}
-  _highlight: {fileID: 284760403}
+  IsOccupied: 0
 --- !u!1 &649102085
 GameObject:
   m_ObjectHideFlags: 0
@@ -8268,9 +8301,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 941882280}
-  _highlight: {fileID: 1464789836}
+  IsOccupied: 0
 --- !u!21 &661957584
 Material:
   serializedVersion: 8
@@ -8759,9 +8791,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 169784567}
-  _highlight: {fileID: 1610414983}
+  IsOccupied: 0
 --- !u!1 &697746223
 GameObject:
   m_ObjectHideFlags: 0
@@ -9142,9 +9173,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1349813501}
-  _highlight: {fileID: 700756298}
+  IsOccupied: 0
 --- !u!1 &714051304
 GameObject:
   m_ObjectHideFlags: 0
@@ -9215,9 +9245,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 313474980}
-  _highlight: {fileID: 1157957000}
+  IsOccupied: 0
 --- !u!1 &734597225
 GameObject:
   m_ObjectHideFlags: 0
@@ -9288,9 +9317,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 852183222}
-  _highlight: {fileID: 538990564}
+  IsOccupied: 0
 --- !u!1 &739515280
 GameObject:
   m_ObjectHideFlags: 0
@@ -9656,9 +9684,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 101467521}
-  _highlight: {fileID: 1941740651}
+  IsOccupied: 0
 --- !u!1 &776484422
 GameObject:
   m_ObjectHideFlags: 0
@@ -9729,9 +9756,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1237145044}
-  _highlight: {fileID: 1702578950}
+  IsOccupied: 0
 --- !u!1 &777218623
 GameObject:
   m_ObjectHideFlags: 0
@@ -9888,9 +9914,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 674664074}
-  _highlight: {fileID: 603326888}
+  IsOccupied: 0
 --- !u!21 &799958153
 Material:
   serializedVersion: 8
@@ -10293,9 +10318,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1059953210}
-  _highlight: {fileID: 1093523485}
+  IsOccupied: 0
 --- !u!1 &826784369
 GameObject:
   m_ObjectHideFlags: 0
@@ -10366,9 +10390,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 2051482445}
-  _highlight: {fileID: 1427950627}
+  IsOccupied: 0
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -10955,9 +10978,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1385662582}
-  _highlight: {fileID: 649102085}
+  IsOccupied: 0
 --- !u!21 &862190950
 Material:
   serializedVersion: 8
@@ -11446,9 +11468,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 2057418472}
-  _highlight: {fileID: 678631954}
+  IsOccupied: 0
 --- !u!1 &910010169
 GameObject:
   m_ObjectHideFlags: 0
@@ -11605,9 +11626,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1133250194}
-  _highlight: {fileID: 225983509}
+  IsOccupied: 0
 --- !u!1 &922284500
 GameObject:
   m_ObjectHideFlags: 0
@@ -12154,9 +12174,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1962999892}
-  _highlight: {fileID: 576697450}
+  IsOccupied: 0
 --- !u!1 &982093999
 GameObject:
   m_ObjectHideFlags: 0
@@ -12313,9 +12332,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 544498287}
-  _highlight: {fileID: 128800757}
+  IsOccupied: 0
 --- !u!1 &983009541
 GameObject:
   m_ObjectHideFlags: 0
@@ -12472,9 +12490,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1509871948}
-  _highlight: {fileID: 2111986219}
+  IsOccupied: 0
 --- !u!21 &987270746
 Material:
   serializedVersion: 8
@@ -12668,9 +12685,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 493634832}
-  _highlight: {fileID: 1653763036}
+  IsOccupied: 0
 --- !u!21 &1000646755
 Material:
   serializedVersion: 8
@@ -13454,9 +13470,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1375786936}
-  _highlight: {fileID: 1650785535}
+  IsOccupied: 0
 --- !u!1 &1093523485
 GameObject:
   m_ObjectHideFlags: 0
@@ -13785,9 +13800,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1493618829}
-  _highlight: {fileID: 2057171406}
+  IsOccupied: 0
 --- !u!1 &1114431611
 GameObject:
   m_ObjectHideFlags: 0
@@ -13858,9 +13872,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 556281586}
-  _highlight: {fileID: 1039578376}
+  IsOccupied: 0
 --- !u!1 &1128069510
 GameObject:
   m_ObjectHideFlags: 0
@@ -14159,9 +14172,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 106890278}
-  _highlight: {fileID: 299031446}
+  IsOccupied: 0
 --- !u!1 &1183945239
 GameObject:
   m_ObjectHideFlags: 0
@@ -14404,9 +14416,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1908442871}
-  _highlight: {fileID: 102827601}
+  IsOccupied: 0
 --- !u!1 &1237145042
 GameObject:
   m_ObjectHideFlags: 0
@@ -14563,9 +14574,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1984420661}
-  _highlight: {fileID: 2059672353}
+  IsOccupied: 0
 --- !u!1 &1242859316
 GameObject:
   m_ObjectHideFlags: 0
@@ -15558,9 +15568,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1349765437}
-  _highlight: {fileID: 1007649663}
+  IsOccupied: 0
 --- !u!21 &1294761945
 Material:
   serializedVersion: 8
@@ -16098,9 +16107,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 403016369}
-  _highlight: {fileID: 157057572}
+  IsOccupied: 0
 --- !u!1 &1351323786
 GameObject:
   m_ObjectHideFlags: 0
@@ -17302,9 +17310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1757931335}
-  _highlight: {fileID: 498182881}
+  IsOccupied: 0
 --- !u!21 &1454474966
 Material:
   serializedVersion: 8
@@ -17756,9 +17763,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 754094594}
-  _highlight: {fileID: 1204545396}
+  IsOccupied: 0
 --- !u!1 &1509871946
 GameObject:
   m_ObjectHideFlags: 0
@@ -18038,9 +18044,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1287874892}
-  _highlight: {fileID: 535612629}
+  IsOccupied: 0
 --- !u!1 &1539660552
 GameObject:
   m_ObjectHideFlags: 0
@@ -18320,9 +18325,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1628605155}
-  _highlight: {fileID: 167046531}
+  IsOccupied: 0
 --- !u!1 &1579841932
 GameObject:
   m_ObjectHideFlags: 0
@@ -18479,9 +18483,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 2045449194}
-  _highlight: {fileID: 1093794652}
+  IsOccupied: 0
 --- !u!1 &1610414983
 GameObject:
   m_ObjectHideFlags: 0
@@ -18638,9 +18641,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 739515282}
-  _highlight: {fileID: 583588658}
+  IsOccupied: 0
 --- !u!1 &1628605153
 GameObject:
   m_ObjectHideFlags: 0
@@ -18920,9 +18922,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 414033361}
-  _highlight: {fileID: 1699953319}
+  IsOccupied: 0
 --- !u!1 &1650785535
 GameObject:
   m_ObjectHideFlags: 0
@@ -19165,9 +19166,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 982094001}
-  _highlight: {fileID: 630829192}
+  IsOccupied: 0
 --- !u!1 &1673976778
 GameObject:
   m_ObjectHideFlags: 0
@@ -19705,9 +19705,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1539660554}
-  _highlight: {fileID: 328438794}
+  IsOccupied: 0
 --- !u!21 &1730393855
 Material:
   serializedVersion: 8
@@ -20233,9 +20232,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1673976780}
-  _highlight: {fileID: 124255200}
+  IsOccupied: 0
 --- !u!1 &1778077095
 GameObject:
   m_ObjectHideFlags: 0
@@ -20392,9 +20390,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1351323788}
-  _highlight: {fileID: 73554647}
+  IsOccupied: 0
 --- !u!21 &1829983328
 Material:
   serializedVersion: 8
@@ -20588,9 +20585,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 705018836}
-  _highlight: {fileID: 1245332427}
+  IsOccupied: 0
 --- !u!1 &1850463206
 GameObject:
   m_ObjectHideFlags: 0
@@ -20833,9 +20829,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 454848756}
-  _highlight: {fileID: 340826017}
+  IsOccupied: 0
 --- !u!21 &1875980397
 Material:
   serializedVersion: 8
@@ -21029,9 +21024,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 2137677829}
-  _highlight: {fileID: 290496117}
+  IsOccupied: 0
 --- !u!1 &1884718395
 GameObject:
   m_ObjectHideFlags: 0
@@ -21181,9 +21175,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 983009543}
-  _highlight: {fileID: 1273136294}
+  IsOccupied: 0
 --- !u!21 &1886416647
 Material:
   serializedVersion: 8
@@ -21795,9 +21788,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 260295011}
-  _highlight: {fileID: 2146484067}
+  IsOccupied: 0
 --- !u!1 &1940680497
 GameObject:
   m_ObjectHideFlags: 0
@@ -21868,9 +21860,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 59388245}
-  _highlight: {fileID: 910010169}
+  IsOccupied: 0
 --- !u!1 &1941740651
 GameObject:
   m_ObjectHideFlags: 0
@@ -22027,9 +22018,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 900722511}
-  _highlight: {fileID: 1242859316}
+  IsOccupied: 0
 --- !u!1 &1962999890
 GameObject:
   m_ObjectHideFlags: 0
@@ -22481,9 +22471,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 697746225}
-  _highlight: {fileID: 802138226}
+  IsOccupied: 0
 --- !u!1 &2014178932
 GameObject:
   m_ObjectHideFlags: 0
@@ -22554,9 +22543,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1724053729}
-  _highlight: {fileID: 211282282}
+  IsOccupied: 0
 --- !u!1 &2022489953
 GameObject:
   m_ObjectHideFlags: 0
@@ -22627,9 +22615,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 2098930803}
-  _highlight: {fileID: 190959962}
+  IsOccupied: 0
 --- !u!1 &2045449192
 GameObject:
   m_ObjectHideFlags: 0
@@ -22872,9 +22859,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1579841934}
-  _highlight: {fileID: 980022275}
+  IsOccupied: 0
 --- !u!1 &2057171406
 GameObject:
   m_ObjectHideFlags: 0
@@ -23203,9 +23189,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 900465536}
-  _highlight: {fileID: 1297995969}
+  IsOccupied: 0
 --- !u!21 &2090850456
 Material:
   serializedVersion: 8
@@ -23485,9 +23470,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 856900384}
-  _highlight: {fileID: 1183945239}
+  IsOccupied: 0
 --- !u!1 &2111986219
 GameObject:
   m_ObjectHideFlags: 0
@@ -23644,9 +23628,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 150773146}
-  _highlight: {fileID: 79220228}
+  IsOccupied: 0
 --- !u!1 &2118691461
 GameObject:
   m_ObjectHideFlags: 0
@@ -24098,9 +24081,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 412567181}
-  _highlight: {fileID: 1778077095}
+  IsOccupied: 0
 --- !u!1 &2146484067
 GameObject:
   m_ObjectHideFlags: 0
@@ -24257,9 +24239,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
-  _highlightColor: {r: 0, g: 0, b: 0, a: 0}
   _renderer: {fileID: 1854073186}
-  _highlight: {fileID: 1283673445}
+  IsOccupied: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -24267,6 +24248,7 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
+  - {fileID: 444924217}
   - {fileID: 709549833}
   - {fileID: 922284501}
   - {fileID: 1128069511}

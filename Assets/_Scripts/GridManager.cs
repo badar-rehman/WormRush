@@ -20,14 +20,9 @@ public class GridManager : MonoBehaviour {
     {
         instance = this;
     }
-
-    void Start() 
-    {
-        GenerateGrid();
-    }
  
     [Button("Generate Grid")]
-    void GenerateGrid() 
+    public void GenerateGrid() 
     {
         _tiles = new Dictionary<Vector3, Tile>();
         for (int x = 0; x < _width; x++) {
@@ -48,8 +43,15 @@ public class GridManager : MonoBehaviour {
  
     public Tile GetTileAtPosition(Vector3 pos) 
     {
-        if (_tiles.TryGetValue(pos, out var tile)) return tile;
-        return null;
+        if (_tiles.TryGetValue(pos, out var tile))
+        {
+            return tile;
+        }
+        else
+        {
+            Debug.Log("TileNotFound at " + pos);
+            return null;
+        }
     }
 
     #region Gizmos

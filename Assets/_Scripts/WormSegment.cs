@@ -19,16 +19,17 @@ public class WormSegment : MonoBehaviour
     public void OnMouseDown()
     {
         isDragging = true;
-        lastPosition = transform.position;
-        
-        // Create a plane to drag on
-        dragPlane = new Plane(Vector3.up, transform.position);
-        
-        // Calculate the offset between the click position and the object's position
+
+        // Always base drag plane and offset on the head, not the clicked segment
+        Transform head = worm.GetHeadSegment().transform;
+
+        dragPlane = new Plane(Vector3.up, head.position);
+
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (dragPlane.Raycast(ray, out float distance))
         {
-            offset = transform.position - ray.GetPoint(distance);
+            Vector3 hitPoint = ray.GetPoint(distance);
+            offset = head.position - hitPoint;
         }
     }
 
@@ -36,26 +37,28 @@ public class WormSegment : MonoBehaviour
     {
         if (!isDragging) return;
 
+        Transform head = worm.GetHeadSegment().transform;
+
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        float distance;
-        if (dragPlane.Raycast(ray, out distance))
+        if (dragPlane.Raycast(ray, out float distance))
         {
-            Vector3 newPosition = ray.GetPoint(distance) + offset;
-            newPosition = new Vector3(Mathf.Round(newPosition.x), 0.5f, Mathf.Round(newPosition.z));
+            Vector3 hitPoint = ray.GetPoint(distance) + offset;
+            Vector3 snappedPoint = new Vector3(Mathf.Round(hitPoint.x), 0f, Mathf.Round(hitPoint.z));
 
-            Vector3 currentPos = transform.position;
-            Vector3 delta = newPosition - currentPos;
+            Vector3 headPos = head.position;
+            Vector3 delta = snappedPoint - headPos;
 
-            // Only allow cardinal direction moves
+            // Only allow movement to a cardinal adjacent tile (no diagonal, 1 step)
             if (Mathf.Abs(delta.x) + Mathf.Abs(delta.z) != 1) return;
 
-            // Only move if the tile is not occupied
-            Tile targetTile = GridManager.instance.GetTileAtPosition(new Vector3(newPosition.x, 0f, newPosition.z));
+            // Check for unoccupied target tile
+            Tile targetTile = GridManager.instance.GetTileAtPosition(snappedPoint);
             if (targetTile == null || targetTile.IsOccupied) return;
 
-            worm.MoveWorm(newPosition);
+            worm.MoveWorm(snappedPoint);
         }
     }
+
 
 
     public void OnMouseUp()
