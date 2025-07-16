@@ -77,56 +77,77 @@ public class Worm : MonoBehaviour
     }
     
     public void MoveWorm(Vector3 newHeadPosition)
+{
+    if (segments.Count == 0) return;
+
+    // Round the new head position to match grid
+    newHeadPosition = new Vector3(
+        Mathf.Round(newHeadPosition.x),
+        Mathf.Round(newHeadPosition.y),
+        Mathf.Round(newHeadPosition.z)
+    );
+
+    // Check if the target tile exists and is unoccupied
+    Tile targetTile = GridManager.instance.GetTileAtPosition(newHeadPosition);
+    if (targetTile == null || targetTile.IsOccupied) return;
+
+    // Store old tile references (before movement)
+    List<Tile> oldTiles = new();
+    foreach (var seg in segments)
     {
-        if (segments.Count == 0) return;
+        Vector3 segPos = seg.transform.position;
+        Tile tile = GridManager.instance.GetTileAtPosition(segPos);
+        oldTiles.Add(tile);
+    }
 
-        Vector3 newHeadGridPos = new Vector3(newHeadPosition.x, 0f,newHeadPosition.z);
-        Tile newTile = GridManager.instance.GetTileAtPosition(newHeadGridPos);
+    // Store current head position before moving
+    Vector3 previousHeadPosition = segments[0].transform.position;
 
-        if (newTile == null || newTile.IsOccupied) return; // Don't move to occupied or invalid tiles
+    // Move segments: tail follows the one in front
+    for (int i = segments.Count - 1; i > 0; i--)
+    {
+        segments[i].transform.position = segments[i - 1].transform.position;
+    }
 
-        // Store old tile references
-        List<Tile> oldTiles = new();
-        foreach (var seg in segments)
+    // Move the head to the new position
+    segments[0].transform.position = newHeadPosition;
+
+    // Rotate the head to face the direction of movement
+    Vector3 moveDirection = newHeadPosition - previousHeadPosition;
+    if (moveDirection != Vector3.zero)
+    {
+        Quaternion rotation = Quaternion.LookRotation(moveDirection, Vector3.up);
+        segments[0].transform.rotation = rotation;
+    }
+
+    // Mark new tile positions as occupied
+    for (int i = 0; i < segments.Count; i++)
+    {
+        Vector3 segPos = segments[i].transform.position;
+        Tile tile = GridManager.instance.GetTileAtPosition(segPos);
+        tile?.SetOccupied(true);
+    }
+
+    // Unmark old tail tile (only the last segment leaves its tile)
+    if (oldTiles.Count > 0)
+    {
+        oldTiles[^1]?.SetOccupied(false);
+    }
+
+    // Update internal bodyPositions array for gizmos/debugging
+    for (int i = 0; i < segments.Count; i++)
+    {
+        if (i < bodyPositions.Length)
         {
-            var tile = GridManager.instance.GetTileAtPosition(new Vector3(seg.transform.position.x, 0f, seg.transform.position.z));
-            oldTiles.Add(tile);
-        }
-
-        // Update segment positions
-        for (int i = segments.Count - 1; i > 0; i--)
-        {
-            segments[i].transform.position = segments[i - 1].transform.position;
-        }
-
-        segments[0].transform.position = newHeadPosition;
-
-        // Mark new tiles
-        for (int i = 0; i < segments.Count; i++)
-        {
-            Vector3 pos = new Vector3(segments[i].transform.position.x, 0f, segments[i].transform.position.z);
-            var tile = GridManager.instance.GetTileAtPosition(pos);
-            tile?.SetOccupied(true);
-        }
-
-        // Clear old tile occupancy
-        for (int i = 1; i < oldTiles.Count; i++)
-        {
-            oldTiles[i]?.SetOccupied(false);
-        }
-
-        // Update bodyPositions
-        for (int i = 0; i < segments.Count; i++)
-        {
-            if (i < bodyPositions.Length)
-            {
-                bodyPositions[i] = new Vector2Int(
-                    Mathf.RoundToInt(segments[i].transform.position.x),
-                    Mathf.RoundToInt(segments[i].transform.position.z)
-                );
-            }
+            Vector3 segPos = segments[i].transform.position;
+            bodyPositions[i] = new Vector2Int(
+                Mathf.RoundToInt(segPos.x),
+                Mathf.RoundToInt(segPos.z)
+            );
         }
     }
+}
+
     
     private void OnDrawGizmos()
     {
