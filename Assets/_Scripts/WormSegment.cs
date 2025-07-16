@@ -18,9 +18,6 @@ public class WormSegment : MonoBehaviour
 
     public void OnMouseDown()
     {
-        // Only allow dragging if this is the head segment
-        if (this != worm.GetHeadSegment()) return;
-        
         isDragging = true;
         lastPosition = transform.position;
         
@@ -29,8 +26,7 @@ public class WormSegment : MonoBehaviour
         
         // Calculate the offset between the click position and the object's position
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        float distance;
-        if (dragPlane.Raycast(ray, out distance))
+        if (dragPlane.Raycast(ray, out float distance))
         {
             offset = transform.position - ray.GetPoint(distance);
         }
