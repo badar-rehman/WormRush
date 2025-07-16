@@ -24,8 +24,7 @@ public class Worm : MonoBehaviour
     public void CreateWorm()
     {
         ClearWorm();
-        
-        // Initialize bodyPositions if it's null or empty
+
         if (bodyPositions == null || bodyPositions.Length == 0)
         {
             bodyPositions = new Vector2Int[length];
@@ -34,36 +33,36 @@ public class Worm : MonoBehaviour
                 bodyPositions[i] = new Vector2Int(i, 0);
             }
         }
-        
-        // Make sure we don't exceed the bodyPositions array
+
         int segmentsToCreate = Mathf.Min(length, bodyPositions.Length);
-        
+
         for (int i = 0; i < segmentsToCreate; i++)
         {
             Vector3 position = new Vector3(bodyPositions[i].x, 0.5f, bodyPositions[i].y);
+            WormSegment segment;
+
             if (i == 0)
             {
-                var head = Instantiate(headPrefab, position, Quaternion.identity, transform);
-                head.worm = this;
-                segments.Add(head);
+                segment = Instantiate(headPrefab, position, Quaternion.identity, transform);
             }
             else
             {
-                var body = Instantiate(bodyPrefab, position, Quaternion.identity, transform);
-                body.worm = this;
-                segments.Add(body);
+                segment = Instantiate(bodyPrefab, position, Quaternion.identity, transform);
             }
+
+            segment.worm = this;
+            segments.Add(segment);
+
+            // Mark tile as occupied
+            var tile = GridManager.instance.GetTileAtPosition(new Vector3(position.x, 0f,position.z));
+            tile?.SetOccupied(true);
         }
 
         if (segments.Count > 1)
         {
-            //set head rotation to face away from second segment
             Vector3 directionToSecondSegment = segments[0].transform.localPosition - segments[1].transform.localPosition;
             Quaternion headRotation = Quaternion.LookRotation(-directionToSecondSegment);
-            Debug.Log(headRotation.eulerAngles);
-            Debug.Log(segments[0].transform.localEulerAngles);
             segments[0].transform.localEulerAngles = headRotation.eulerAngles + new Vector3(0, 180, 0);
-            Debug.Log(segments[0].transform.localEulerAngles);
         }
     }
 
@@ -80,24 +79,43 @@ public class Worm : MonoBehaviour
     public void MoveWorm(Vector3 newHeadPosition)
     {
         if (segments.Count == 0) return;
-        
-        // Store the previous positions
-        Vector3[] previousPositions = new Vector3[segments.Count];
+
+        Vector3 newHeadGridPos = new Vector3(newHeadPosition.x, 0f,newHeadPosition.z);
+        Tile newTile = GridManager.instance.GetTileAtPosition(newHeadGridPos);
+
+        if (newTile == null || newTile.IsOccupied) return; // Don't move to occupied or invalid tiles
+
+        // Store old tile references
+        List<Tile> oldTiles = new();
+        foreach (var seg in segments)
+        {
+            var tile = GridManager.instance.GetTileAtPosition(new Vector3(seg.transform.position.x, 0f, seg.transform.position.z));
+            oldTiles.Add(tile);
+        }
+
+        // Update segment positions
+        for (int i = segments.Count - 1; i > 0; i--)
+        {
+            segments[i].transform.position = segments[i - 1].transform.position;
+        }
+
+        segments[0].transform.position = newHeadPosition;
+
+        // Mark new tiles
         for (int i = 0; i < segments.Count; i++)
         {
-            previousPositions[i] = segments[i].transform.position;
+            Vector3 pos = new Vector3(segments[i].transform.position.x, 0f, segments[i].transform.position.z);
+            var tile = GridManager.instance.GetTileAtPosition(pos);
+            tile?.SetOccupied(true);
         }
-        
-        // Move the head to the new position
-        segments[0].transform.position = newHeadPosition;
-        
-        // Move each body segment to the previous position of the segment in front of it
-        for (int i = 1; i < segments.Count; i++)
+
+        // Clear old tile occupancy
+        for (int i = 1; i < oldTiles.Count; i++)
         {
-            segments[i].transform.position = previousPositions[i - 1];
+            oldTiles[i]?.SetOccupied(false);
         }
-        
-        // Update the body positions for gizmos
+
+        // Update bodyPositions
         for (int i = 0; i < segments.Count; i++)
         {
             if (i < bodyPositions.Length)

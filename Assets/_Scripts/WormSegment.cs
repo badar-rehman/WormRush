@@ -39,26 +39,28 @@ public class WormSegment : MonoBehaviour
     public void OnMouseDrag()
     {
         if (!isDragging) return;
-        
+
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         float distance;
         if (dragPlane.Raycast(ray, out distance))
         {
             Vector3 newPosition = ray.GetPoint(distance) + offset;
-            // Snap to grid
             newPosition = new Vector3(Mathf.Round(newPosition.x), 0.5f, Mathf.Round(newPosition.z));
-            
-            // Only move if the position has changed
-            if (newPosition != transform.position)
-            {
-                // Calculate movement direction
-                direction = (newPosition - transform.position).normalized;
-                
-                // Move the worm
-                worm.MoveWorm(newPosition);
-            }
+
+            Vector3 currentPos = transform.position;
+            Vector3 delta = newPosition - currentPos;
+
+            // Only allow cardinal direction moves
+            if (Mathf.Abs(delta.x) + Mathf.Abs(delta.z) != 1) return;
+
+            // Only move if the tile is not occupied
+            Tile targetTile = GridManager.instance.GetTileAtPosition(new Vector3(newPosition.x, 0f, newPosition.z));
+            if (targetTile == null || targetTile.IsOccupied) return;
+
+            worm.MoveWorm(newPosition);
         }
     }
+
 
     public void OnMouseUp()
     {
