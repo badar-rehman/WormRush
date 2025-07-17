@@ -47,10 +47,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3547fd0343e3e6c459309f5f8c26df13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _appearance: 2
   _baseColor: {r: 1, g: 0.88825697, b: 0, a: 1}
   _offsetColor: {r: 1, g: 0.41024005, b: 0, a: 1}
+  _baseMat: {fileID: 2100000, guid: eef0290c7816f7a4193bde234a0c8b50, type: 2}
+  _offsetMat: {fileID: 2100000, guid: f74a8a03431ed57408a9d1b8b32f0f42, type: 2}
   _renderer: {fileID: 1299527641008184799}
-  _highlight: {fileID: 6456321172672503604}
+  IsOccupied: 0
 --- !u!65 &9054100756888264967
 BoxCollider:
   m_ObjectHideFlags: 0

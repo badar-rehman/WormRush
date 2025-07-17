@@ -39,7 +39,7 @@ public class GridManager : MonoBehaviour {
             }
         }
 
-        _cam.transform.position = new Vector3((float)_width / 2 - 0.5f, 8f, -0.89f); //-(float)_height / 2 - 0.5f);
+        _cam.transform.position = new Vector3((float)_width / 2 - 0.5f, 16f, -4.5f); //-(float)_height / 2 - 0.5f);
     }
 
     public void SpawnObstacles()

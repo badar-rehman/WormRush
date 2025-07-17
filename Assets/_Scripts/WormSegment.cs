@@ -61,6 +61,8 @@ public class WormSegment : MonoBehaviour
 
     private void TryMoveInDirection(Vector3 direction)
     {
+        if (worm == null || worm.IsMoving()) return; // NEW check
+
         var head = worm.GetHeadSegment();
         Vector3 headPos = head.transform.position;
         Vector3 targetPos = new Vector3(
