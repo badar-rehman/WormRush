@@ -17,5 +17,6 @@ public class GameManager : MonoBehaviour
     {
         GridManager.instance.GenerateGrid();
         worm.CreateWorm();
+        GridManager.instance.SpawnObstacles();
     }
 }

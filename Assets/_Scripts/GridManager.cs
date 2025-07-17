@@ -11,6 +11,7 @@ public class GridManager : MonoBehaviour {
     [SerializeField] private int _width, _height;
  
     [SerializeField] private Tile _tilePrefab;
+    [SerializeField] private GameObject _obstaclePrefab;
  
     [SerializeField] private Transform _cam;
  
@@ -40,7 +41,45 @@ public class GridManager : MonoBehaviour {
 
         _cam.transform.position = new Vector3((float)_width / 2 - 0.5f, 8f, -0.89f); //-(float)_height / 2 - 0.5f);
     }
- 
+
+    public void SpawnObstacles()
+    {
+        if (_obstaclePrefab == null)
+        {
+            Debug.LogError("Obstacle prefab is not assigned in GridManager!");
+            return;
+        }
+
+        // Get all unoccupied tiles
+        List<Vector3> unoccupiedTiles = new List<Vector3>();
+        foreach (var tile in _tiles.Values)
+        {
+            if (!tile.IsOccupied)
+            unoccupiedTiles.Add(tile.transform.position);
+        }
+
+        // Shuffle the list to get random tiles
+        for (int i = 0; i < unoccupiedTiles.Count; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(i, unoccupiedTiles.Count);
+            (unoccupiedTiles[i], unoccupiedTiles[randomIndex]) = (unoccupiedTiles[randomIndex], unoccupiedTiles[i]);
+        }
+
+        // Spawn up to 3 obstacles or the number of available unoccupied tiles, whichever is smaller
+        int obstaclesToSpawn = Mathf.Min(3, unoccupiedTiles.Count);
+        
+        for (int i = 0; i < obstaclesToSpawn; i++)
+        {
+            Vector3 spawnPos = unoccupiedTiles[i];
+            Tile tile = GetTileAtPosition(spawnPos);
+            if (tile != null && !tile.IsOccupied)
+            {
+                Instantiate(_obstaclePrefab, spawnPos, Quaternion.identity, transform);
+                tile.SetOccupied(true);
+            }
+        }
+    }
+
     public Tile GetTileAtPosition(Vector3 pos) 
     {
         if (_tiles.TryGetValue(pos, out var tile))

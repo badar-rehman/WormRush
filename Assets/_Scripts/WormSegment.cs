@@ -10,7 +10,12 @@ public class WormSegment : MonoBehaviour
     private Camera mainCamera;
     private Vector3 lastPosition;
     private Vector3 direction;
+    private Vector2 mouseStartPos;
+    private float moveCooldown = 0.15f; // Time between allowed moves
+    private float moveTimer = 0f;
 
+    private float gridMoveThreshold = 50f; // pixels to trigger 1-tile move
+    
     private void Start()
     {
         mainCamera = Camera.main;
@@ -19,50 +24,55 @@ public class WormSegment : MonoBehaviour
     public void OnMouseDown()
     {
         isDragging = true;
-
-        // Always base drag plane and offset on the head, not the clicked segment
-        Transform head = worm.GetHeadSegment().transform;
-
-        dragPlane = new Plane(Vector3.up, head.position);
-
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (dragPlane.Raycast(ray, out float distance))
-        {
-            Vector3 hitPoint = ray.GetPoint(distance);
-            offset = head.position - hitPoint;
-        }
+        mouseStartPos = Input.mousePosition;
     }
 
     public void OnMouseDrag()
     {
         if (!isDragging) return;
 
-        Transform head = worm.GetHeadSegment().transform;
+        Vector2 currentMousePos = Input.mousePosition;
+        Vector2 dragDelta = currentMousePos - mouseStartPos;
 
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        if (dragPlane.Raycast(ray, out float distance))
+        if (dragDelta.magnitude < gridMoveThreshold) return;
+
+        Vector3 direction = Vector3.zero;
+
+        // Determine main cardinal direction
+        if (Mathf.Abs(dragDelta.x) > Mathf.Abs(dragDelta.y))
         {
-            Vector3 hitPoint = ray.GetPoint(distance) + offset;
-            Vector3 snappedPoint = new Vector3(Mathf.Round(hitPoint.x), 0f, Mathf.Round(hitPoint.z));
-
-            Vector3 headPos = head.position;
-            Vector3 delta = snappedPoint - headPos;
-
-            // Only allow movement to a cardinal adjacent tile (no diagonal, 1 step)
-            if (Mathf.Abs(delta.x) + Mathf.Abs(delta.z) != 1) return;
-
-            // Check for unoccupied target tile
-            Tile targetTile = GridManager.instance.GetTileAtPosition(snappedPoint);
-            if (targetTile == null || targetTile.IsOccupied) return;
-
-            worm.MoveWorm(snappedPoint);
+            direction = dragDelta.x > 0 ? Vector3.right : Vector3.left;
         }
+        else
+        {
+            direction = dragDelta.y > 0 ? Vector3.forward : Vector3.back;
+        }
+
+        TryMoveInDirection(direction);
+
+        // Reset mouse start for continuous drag movement
+        mouseStartPos = currentMousePos;
     }
-
-
 
     public void OnMouseUp()
     {
         isDragging = false;
+    }
+
+    private void TryMoveInDirection(Vector3 direction)
+    {
+        var head = worm.GetHeadSegment();
+        Vector3 headPos = head.transform.position;
+        Vector3 targetPos = new Vector3(
+            Mathf.Round(headPos.x + direction.x),
+            0f,
+            Mathf.Round(headPos.z + direction.z)
+        );
+
+        Tile targetTile = GridManager.instance.GetTileAtPosition(targetPos);
+        if (targetTile != null && !targetTile.IsOccupied)
+        {
+            worm.MoveWorm(targetPos);
+        }
     }
 }

@@ -9098,6 +9098,7 @@ MonoBehaviour:
   _width: 8
   _height: 8
   _tilePrefab: {fileID: 5770894490043081274, guid: 335e38cdf2e29b7429d522ed0433cc09, type: 3}
+  _obstaclePrefab: {fileID: 3154507747184898554, guid: ed531f31baf94a74aada22578a40d245, type: 3}
   _cam: {fileID: 330585546}
   gizmoTileColor: {r: 1, g: 1, b: 1, a: 0.0627451}
   gizmoOutlineColor: {r: 0, g: 0, b: 0, a: 0.57254905}
@@ -13928,7 +13929,7 @@ MonoBehaviour:
   - {x: 1, y: 4}
   gizmoHeadColor: {r: 0, g: 1, b: 0, a: 1}
   gizmoBodyColor: {r: 0, g: 0.7012012, b: 1, a: 1}
-  gizmoSize: 0.497
+  gizmoSize: 0.462
   segments: []
 --- !u!1 &1133250192
 GameObject:

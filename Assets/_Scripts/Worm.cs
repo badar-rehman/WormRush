@@ -57,7 +57,8 @@ public class Worm : MonoBehaviour
             var tile = GridManager.instance.GetTileAtPosition(new Vector3(position.x, 0f,position.z));
             tile?.SetOccupied(true);
         }
-
+        
+        //Set head rotation
         if (segments.Count > 1)
         {
             Vector3 directionToSecondSegment = segments[0].transform.localPosition - segments[1].transform.localPosition;
