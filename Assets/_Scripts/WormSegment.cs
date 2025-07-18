@@ -1,14 +1,18 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class WormSegment : MonoBehaviour
 {
     public Worm worm;
+    
+    [SerializeField] [ReadOnly] private int segmentIndex;
+    [SerializeField] [ReadOnly] private bool isCloseToHead;
+    
     private bool isDragging = false;
     private Vector2 mouseStartPos;
     private float gridMoveThreshold = 50f; // Pixels to trigger move
     private float moveCooldown = 0.15f;
     private float moveTimer = 0f;
-    private Camera mainCamera;
     
     public Vector3 Pos
     {
@@ -21,10 +25,12 @@ public class WormSegment : MonoBehaviour
         get => transform.localPosition;
         set => transform.localPosition = value;
     }
-    
-    private void Start()
+
+    public void Setup(Worm _worm, int _segmentIndex, bool _isCloseToHead)
     {
-        mainCamera = Camera.main;
+        worm = _worm;
+        segmentIndex = _segmentIndex;
+        isCloseToHead = _isCloseToHead;
     }
 
     public void OnMouseDown()
@@ -53,7 +59,7 @@ public class WormSegment : MonoBehaviour
         else
             inputDir = dragDelta.y > 0 ? Vector3.forward : Vector3.back;
 
-        TryMoveBasedOnAlignment(inputDir);
+        worm.TryMove(inputDir, isCloseToHead);
 
         // Reset drag for smooth continuous dragging
         mouseStartPos = currentMousePos;
@@ -64,25 +70,5 @@ public class WormSegment : MonoBehaviour
     {
         isDragging = false;
         moveTimer = 0f;
-    }
-
-    private void TryMoveBasedOnAlignment(Vector3 inputDir)
-    {
-        if (worm == null || worm.IsMoving()) return;
-
-        Vector3 headDir = worm.GetHeadDirection();
-        Vector3 tailDir = worm.GetTailDirection();
-
-        float headDot = Vector3.Dot(inputDir.normalized, headDir.normalized);
-        float tailDot = Vector3.Dot(inputDir.normalized, tailDir.normalized);
-
-        if (headDot > tailDot)
-        {
-            worm.MoveWormFromHead(inputDir);
-        }
-        else
-        {
-            worm.MoveWormFromTail(inputDir);
-        }
     }
 }

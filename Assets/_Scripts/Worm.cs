@@ -15,6 +15,8 @@ public class Worm : MonoBehaviour
 
     private bool isMoving = false;
     
+    [SerializeField] [DisableIf("segments")] private List<WormSegment> segments = new List<WormSegment>();
+    
     #region Gizmos
     [FoldoutGroup("Gizmos")]
     [SerializeField] private Color gizmoHeadColor = Color.green;
@@ -24,7 +26,6 @@ public class Worm : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] private float gizmoSize = 0.5f;
     #endregion
     
-    [SerializeField] [DisableIf("segments")] private List<WormSegment> segments = new List<WormSegment>();
     
     [Button("Create Worm")]
     public void CreateWorm()
@@ -56,7 +57,7 @@ public class Worm : MonoBehaviour
                 segment = Instantiate(bodyPrefab, position, Quaternion.identity, transform);
             }
 
-            segment.worm = this;
+            segment.Setup(this, i, i < segmentsToCreate/2);
             segments.Add(segment);
 
             // Mark tile as occupied
@@ -78,25 +79,9 @@ public class Worm : MonoBehaviour
         segments.Clear();
     }
     
-    public WormSegment GetHeadSegment()
-    {
-        return segments.Count > 0 ? segments[0] : null;
-    }
-    public WormSegment GetTailSegment()
-    {
-        return segments.Count > 0 ? segments[^1] : null;
-    }
-    public Vector3 GetHeadDirection()
-    {
-        if (segments.Count < 2) return Vector3.forward;
-        return segments[0].Pos - segments[1].Pos;
-    }
-
-    public Vector3 GetTailDirection()
-    {
-        if (segments.Count < 2) return Vector3.back;
-        return segments[^1].Pos - segments[^2].Pos;
-    }
+    public WormSegment HeadSeg => segments.Count > 0 ? segments[0] : null;
+    public WormSegment TailSeg => segments.Count > 0 ? segments[^1] : null;
+    
 
     public void MoveWormFromHead(Vector3 direction)
     {
@@ -224,6 +209,24 @@ public class Worm : MonoBehaviour
         {
             Gizmos.color = i == 0 ? gizmoHeadColor : gizmoBodyColor;
             Gizmos.DrawSphere(new Vector3(bodyPositions[i].x, 0.5f, bodyPositions[i].y), gizmoSize);
+        }
+    }
+
+    public void TryMove(Vector3 inputDir, bool isCloseToHead)
+    {
+        if (isCloseToHead)
+        {
+            if (!IsMoving() && inputDir == HeadSeg.transform.forward)
+            {
+                Vector3 newPos = HeadSeg.Pos + inputDir;
+                Tile tile = GridManager.instance.GetTileAtPosition(newPos);
+                if(tile)
+                    StartCoroutine(MoveCoroutine(newPos, true));
+            }
+        }
+        else
+        {
+            
         }
     }
 }
