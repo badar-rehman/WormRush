@@ -5040,7 +5040,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.6830127, y: -0.18301266, z: 0.18301266, w: 0.6830127}
+  m_LocalRotation: {x: 0.8002785, y: 0.042314924, z: -0.05687333, w: 0.59542364}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -14024,7 +14024,7 @@ MonoBehaviour:
   - {x: 1, y: 3}
   - {x: 1, y: 4}
   - {x: 1, y: 5}
-  moveDuration: 0.15
+  moveDuration: 0.11
   gizmoHeadColor: {r: 0, g: 1, b: 0, a: 1}
   gizmoBodyColor: {r: 0, g: 0.7012012, b: 1, a: 1}
   gizmoSize: 0.462

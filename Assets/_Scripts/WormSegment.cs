@@ -1,20 +1,26 @@
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class WormSegment : MonoBehaviour
 {
     public Worm worm;
     private bool isDragging = false;
-    private Vector3 offset;
-    private Plane dragPlane;
-    private Camera mainCamera;
-    private Vector3 lastPosition;
-    private Vector3 direction;
     private Vector2 mouseStartPos;
-    private float moveCooldown = 0.15f; // Time between allowed moves
+    private float gridMoveThreshold = 50f; // Pixels to trigger move
+    private float moveCooldown = 0.15f;
     private float moveTimer = 0f;
+    private Camera mainCamera;
+    
+    public Vector3 Pos
+    {
+        get => transform.position;
+        set => transform.position = value;
+    }
 
-    private float gridMoveThreshold = 50f; // pixels to trigger 1-tile move
+    public Vector3 LPos
+    {
+        get => transform.localPosition;
+        set => transform.localPosition = value;
+    }
     
     private void Start()
     {
@@ -31,50 +37,52 @@ public class WormSegment : MonoBehaviour
     {
         if (!isDragging) return;
 
+        moveTimer += Time.deltaTime;
+        if (moveTimer < moveCooldown) return;
+
         Vector2 currentMousePos = Input.mousePosition;
         Vector2 dragDelta = currentMousePos - mouseStartPos;
 
         if (dragDelta.magnitude < gridMoveThreshold) return;
 
-        Vector3 direction = Vector3.zero;
+        Vector3 inputDir = Vector3.zero;
 
-        // Determine main cardinal direction
+        // Determine input direction in world (X-Z plane)
         if (Mathf.Abs(dragDelta.x) > Mathf.Abs(dragDelta.y))
-        {
-            direction = dragDelta.x > 0 ? Vector3.right : Vector3.left;
-        }
+            inputDir = dragDelta.x > 0 ? Vector3.right : Vector3.left;
         else
-        {
-            direction = dragDelta.y > 0 ? Vector3.forward : Vector3.back;
-        }
+            inputDir = dragDelta.y > 0 ? Vector3.forward : Vector3.back;
 
-        TryMoveInDirection(direction);
+        TryMoveBasedOnAlignment(inputDir);
 
-        // Reset mouse start for continuous drag movement
+        // Reset drag for smooth continuous dragging
         mouseStartPos = currentMousePos;
+        moveTimer = 0f;
     }
 
     public void OnMouseUp()
     {
         isDragging = false;
+        moveTimer = 0f;
     }
 
-    private void TryMoveInDirection(Vector3 direction)
+    private void TryMoveBasedOnAlignment(Vector3 inputDir)
     {
-        if (worm == null || worm.IsMoving()) return; // NEW check
+        if (worm == null || worm.IsMoving()) return;
 
-        var head = worm.GetHeadSegment();
-        Vector3 headPos = head.transform.position;
-        Vector3 targetPos = new Vector3(
-            Mathf.Round(headPos.x + direction.x),
-            0f,
-            Mathf.Round(headPos.z + direction.z)
-        );
+        Vector3 headDir = worm.GetHeadDirection();
+        Vector3 tailDir = worm.GetTailDirection();
 
-        Tile targetTile = GridManager.instance.GetTileAtPosition(targetPos);
-        if (targetTile != null && !targetTile.IsOccupied)
+        float headDot = Vector3.Dot(inputDir.normalized, headDir.normalized);
+        float tailDot = Vector3.Dot(inputDir.normalized, tailDir.normalized);
+
+        if (headDot > tailDot)
         {
-            worm.MoveWorm(targetPos);
+            worm.MoveWormFromHead(inputDir);
+        }
+        else
+        {
+            worm.MoveWormFromTail(inputDir);
         }
     }
 }

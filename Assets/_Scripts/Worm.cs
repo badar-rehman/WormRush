@@ -67,7 +67,7 @@ public class Worm : MonoBehaviour
         //Set head rotation
         if (segments.Count > 1)
         {
-            Vector3 directionToSecondSegment = segments[0].transform.localPosition - segments[1].transform.localPosition;
+            Vector3 directionToSecondSegment = segments[0].LPos - segments[1].LPos;
             Quaternion headRotation = Quaternion.LookRotation(-directionToSecondSegment);
             segments[0].transform.localEulerAngles = headRotation.eulerAngles + new Vector3(0, 180, 0);
         }
@@ -86,89 +86,135 @@ public class Worm : MonoBehaviour
     {
         return segments.Count > 0 ? segments[^1] : null;
     }
-    
-    public void MoveWorm(Vector3 newHeadPosition)
+    public Vector3 GetHeadDirection()
     {
-        if (isMoving) return;
-
-        StartCoroutine(MoveRoutine(newHeadPosition));
+        if (segments.Count < 2) return Vector3.forward;
+        return segments[0].Pos - segments[1].Pos;
     }
 
-    private IEnumerator MoveRoutine(Vector3 newHeadPosition)
+    public Vector3 GetTailDirection()
+    {
+        if (segments.Count < 2) return Vector3.back;
+        return segments[^1].Pos - segments[^2].Pos;
+    }
+
+    public void MoveWormFromHead(Vector3 direction)
+    {
+        Vector3 headPos = segments[0].Pos;
+        Vector3 targetPos = headPos + direction;
+
+        Tile targetTile = GridManager.instance.GetTileAtPosition(targetPos);
+        if (targetTile != null && !targetTile.IsOccupied)
+        {
+            MoveWorm(targetPos, fromHead: true);
+        }
+    }
+
+    public void MoveWormFromTail(Vector3 direction)
+    {
+        Vector3 tailPos = segments[^1].Pos;
+        Vector3 targetPos = tailPos + direction;
+
+        Tile targetTile = GridManager.instance.GetTileAtPosition(targetPos);
+        if (targetTile != null && !targetTile.IsOccupied)
+        {
+            MoveWorm(targetPos, fromHead: false);
+        }
+    }
+    public void MoveWorm(Vector3 newPos, bool fromHead)
+    {
+        if (isMoving) return;
+        StartCoroutine(MoveCoroutine(newPos, fromHead));
+    }
+
+
+    private IEnumerator MoveCoroutine(Vector3 newPos, bool fromHead)
     {
         isMoving = true;
 
-        // Save previous positions
-        List<Vector3> oldPositions = new List<Vector3>();
-        foreach (var segment in segments)
+        Vector3Int gridPos = Vector3Int.RoundToInt(newPos);
+
+        Tile targetTile = GridManager.instance.GetTileAtPosition(gridPos);
+        if (targetTile == null || targetTile.IsOccupied)
         {
-            oldPositions.Add(segment.transform.position);
+            isMoving = false;
+            yield break;
         }
 
-        // Update tile states before animation
-        Tile oldTailTile = GridManager.instance.GetTileAtPosition(oldPositions[^1]);
-        if (oldTailTile != null)
-            oldTailTile.IsOccupied = false;
+        // Mark the new tile as occupied
+        targetTile.IsOccupied = true;
 
-        Tile newHeadTile = GridManager.instance.GetTileAtPosition(newHeadPosition);
-        if (newHeadTile != null)
-            newHeadTile.IsOccupied = true;
+        // Determine which segment will vacate its tile
+        WormSegment exitingSegment = fromHead ? segments[^1] : segments[0];
+        Tile exitingTile =
+            GridManager.instance.GetTileAtPosition(Vector3Int.RoundToInt(exitingSegment.Pos));
+        
+        float duration = moveDuration;
+        float elapsed = 0f;
 
-        // Update rotation
-        Vector3 moveDir = newHeadPosition - oldPositions[0];
-        if (moveDir != Vector3.zero)
+        // Shift segment positions and start rotation tweens
+        Vector3[] startPositions = new Vector3[segments.Count];
+        for (int i = 0; i < segments.Count; i++)
         {
-            segments[0].transform.DOLookAt(segments[0].transform.position + moveDir, moveDuration);
+            startPositions[i] = segments[i].Pos;
+            
+            if (fromHead)
+            {
+                segments[i].transform.DOLookAt(i == 0 ? newPos : segments[i - 1].Pos, duration * 0.95f);
+            }
+            else
+            {
+                segments[i].transform.DOLookAt(i == 0 ? exitingTile.transform.position : segments[i - 1].Pos, duration * 0.95f);
+            }
         }
         
-        float elapsed = 0f;
-        while (elapsed < moveDuration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / moveDuration);
+            float t = elapsed / duration;
 
-            segments[0].transform.position = Vector3.Lerp(oldPositions[0], newHeadPosition, t);
-
-            for (int i = 1; i < segments.Count; i++)
+            for (int i = 0; i < segments.Count; i++)
             {
-                segments[i].transform.position = Vector3.Lerp(oldPositions[i], oldPositions[i - 1], t);
+                if (fromHead)
+                {
+                    if (i == 0)
+                        segments[i].transform.position = Vector3.Lerp(startPositions[i], newPos, t);
+                    else
+                        segments[i].transform.position = Vector3.Lerp(startPositions[i], startPositions[i - 1], t);
+                }
+                else // move from tail
+                {
+                    if (i == segments.Count - 1)
+                        segments[i].transform.position = Vector3.Lerp(startPositions[i], newPos, t);
+                    else
+                        segments[i].transform.position = Vector3.Lerp(startPositions[i], startPositions[i + 1], t);
+                }
             }
 
             yield return null;
         }
 
-        // Snap to final positions
-        segments[0].transform.position = newHeadPosition;
-        for (int i = 1; i < segments.Count; i++)
+        // Final snapping
+        if (fromHead)
         {
-            segments[i].transform.position = oldPositions[i - 1];
+            segments[0].transform.position = newPos;
+            for (int i = 1; i < segments.Count; i++)
+                segments[i].transform.position = startPositions[i - 1];
         }
-        
-        //set tiles state
-        foreach (var segment in segments)
+        else
         {
-            Tile tile = GridManager.instance.GetTileAtPosition(segment.transform.position);
-            if (tile != null)
-                tile.IsOccupied = true;
+            segments[^1].transform.position = newPos;
+            for (int i = 0; i < segments.Count - 1; i++)
+                segments[i].transform.position = startPositions[i + 1];
         }
+
+        // Free the old tile
+        if (exitingTile != null)
+            exitingTile.IsOccupied = false;
 
         isMoving = false;
-        
-        // Update internal bodyPositions array for gizmos/debugging
-        for (int i = 0; i < segments.Count; i++)
-        {
-            if (i < bodyPositions.Length)
-            {
-                Vector3 segPos = segments[i].transform.position;
-                bodyPositions[i] = new Vector2Int(
-                    Mathf.RoundToInt(segPos.x),
-                    Mathf.RoundToInt(segPos.z)
-                );
-            }
-        }
     }
-
-
+    
     public bool IsMoving() => isMoving;
 
     private void OnDrawGizmos()
