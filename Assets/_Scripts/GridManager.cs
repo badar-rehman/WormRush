@@ -9,13 +9,23 @@ public class GridManager : MonoBehaviour {
     public static GridManager instance;
     
     [SerializeField] private int _width, _height;
- 
+    [SerializeField] private int numOfObstacles;
     [SerializeField] private Tile _tilePrefab;
     [SerializeField] private GameObject _obstaclePrefab;
- 
     [SerializeField] private Transform _cam;
- 
+    
     private Dictionary<Vector3, Tile> _tiles;
+    
+    #region Gizmos
+    [FoldoutGroup("Gizmos")]
+    [SerializeField] private Color gizmoTileColor = Color.green;
+    [FoldoutGroup("Gizmos")]
+    [SerializeField] private Color gizmoOutlineColor = Color.green;
+    [FoldoutGroup("Gizmos")]
+    [SerializeField] private Vector3 gizmoSize;
+    [FoldoutGroup("Gizmos")]
+    [SerializeField] [Range(0f, 1f)] private float gizmoHeight;
+    #endregion
 
     private void Awake()
     {
@@ -39,7 +49,7 @@ public class GridManager : MonoBehaviour {
             }
         }
 
-        _cam.transform.position = new Vector3((float)_width / 2 - 0.5f, 16f, -4.5f); //-(float)_height / 2 - 0.5f);
+        _cam.transform.position = new Vector3((float)_width / 2 - 0.5f, 16f, 3.28f); //-(float)_height / 2 - 0.5f);
     }
 
     public void SpawnObstacles()
@@ -66,7 +76,7 @@ public class GridManager : MonoBehaviour {
         }
 
         // Spawn up to 3 obstacles or the number of available unoccupied tiles, whichever is smaller
-        int obstaclesToSpawn = Mathf.Min(3, unoccupiedTiles.Count);
+        int obstaclesToSpawn = Mathf.Min(numOfObstacles, unoccupiedTiles.Count);
         
         for (int i = 0; i < obstaclesToSpawn; i++)
         {
@@ -82,7 +92,7 @@ public class GridManager : MonoBehaviour {
 
     public Tile GetTileAtPosition(Vector3 pos) 
     {
-        if (_tiles.TryGetValue(pos, out var tile))
+        if (_tiles.TryGetValue(Vector3Int.RoundToInt(pos), out var tile))
         {
             return tile;
         }
@@ -93,16 +103,20 @@ public class GridManager : MonoBehaviour {
         }
     }
 
-    #region Gizmos
-    [FoldoutGroup("Gizmos")]
-    [SerializeField] private Color gizmoTileColor = Color.green;
-    [FoldoutGroup("Gizmos")]
-    [SerializeField] private Color gizmoOutlineColor = Color.green;
-    [FoldoutGroup("Gizmos")]
-    [SerializeField] private Vector3 gizmoSize;
-    [FoldoutGroup("Gizmos")]
-    [SerializeField] [Range(0f, 1f)] private float gizmoHeight;
-    #endregion
+    public Tile GetUnOccupiedTileAtPosition(Vector3 pos)
+    {
+        if (_tiles.TryGetValue(Vector3Int.RoundToInt(pos), out var tile))
+        {
+            if (tile.IsOccupied)
+                return null;
+
+            return tile;
+        }
+
+        Debug.Log("TileNotFound at " + pos);
+        return null;
+    }
+
     private void OnDrawGizmos()
     {
         for (int x = 0; x < _width; x++)

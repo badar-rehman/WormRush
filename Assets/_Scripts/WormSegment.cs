@@ -8,11 +8,9 @@ public class WormSegment : MonoBehaviour
     [SerializeField] [ReadOnly] private int segmentIndex;
     [SerializeField] [ReadOnly] private bool isCloseToHead;
     
+    private float moveTimer = 0f;
     private bool isDragging = false;
     private Vector2 mouseStartPos;
-    private float gridMoveThreshold = 50f; // Pixels to trigger move
-    private float moveCooldown = 0.15f;
-    private float moveTimer = 0f;
     
     public Vector3 Pos
     {
@@ -44,12 +42,12 @@ public class WormSegment : MonoBehaviour
         if (!isDragging) return;
 
         moveTimer += Time.deltaTime;
-        if (moveTimer < moveCooldown) return;
+        if (moveTimer < worm.moveCooldown) return;
 
         Vector2 currentMousePos = Input.mousePosition;
         Vector2 dragDelta = currentMousePos - mouseStartPos;
 
-        if (dragDelta.magnitude < gridMoveThreshold) return;
+        if (dragDelta.magnitude < worm.gridMoveThreshold) return;
 
         Vector3 inputDir = Vector3.zero;
 

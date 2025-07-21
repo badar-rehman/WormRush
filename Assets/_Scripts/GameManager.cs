@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public Worm worm;
+    public Worm[] worms;
     private void Awake()
     {
         instance = this;
@@ -16,7 +17,15 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GridManager.instance.GenerateGrid();
-        worm.CreateWorm();
+        foreach (var worm in  worms)
+        {
+            worm.CreateWorm();
+        }
         GridManager.instance.SpawnObstacles();
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
