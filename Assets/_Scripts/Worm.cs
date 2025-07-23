@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -22,7 +23,8 @@ public class Worm : MonoBehaviour
     
     private List<Vector3> movePrevPositions = new List<Vector3>();
     private List<Vector3> moveNewPositions = new List<Vector3>();
-    
+
+    [SerializeField] private GameConfigs gameConfigs;
     
     [Button("Create Worm")]
     public void CreateWorm()
@@ -95,7 +97,7 @@ public class Worm : MonoBehaviour
             yield break;
         }
         
-        float duration = GameConfigs.instance.moveDuration;
+        float duration = gameConfigs.moveDuration;
         float elapsed = 0f;
         
         //Store previous positions
@@ -224,20 +226,103 @@ public class Worm : MonoBehaviour
         }
     }
 
+    public float moveSpeed = 1f;
+    private List<List<Vector3>> bodyPathsList;
+    [Button("MoveToTile")]
+    public void MoveToTile(Tile tile)
+    {
+        var startTile = GridManager.instance.GetTileAtPosition(HeadSeg.Pos);
+        startTile.IsOccupied = false;
+        List<Tile> path = GridManager.instance.GetShortestPath(startTile, tile);
+        List<Vector3> tilePosPath = new List<Vector3>();
+        if (path != null)
+        {
+            Debug.Log("Path: " + path.Count);
+            
+            foreach(var _tile in path)
+                tilePosPath.Add(_tile.transform.position);
+            
+            //bodyPathsList.Clear();
+            bodyPathsList = new List<List<Vector3>>();
+            
+            bodyPathsList.Add(tilePosPath);
+            
+            for (int i = 1; i < segments.Count; i++)
+            {
+                List<Vector3> segPosPath = new List<Vector3>();
+                
+                foreach (var poss in tilePosPath)
+                    segPosPath.Add(poss);
+                
+                for (int j = 0; j < i; j++)
+                {
+                    segPosPath.Insert(0, segments[j].Pos);
+                }
+                
+                for (int j = i; j > 0; j--)
+                {
+                    //remove last element
+                    segPosPath.RemoveAt(segPosPath.Count - 1);
+                }
+                
+                bodyPathsList.Add(segPosPath);
+            }
+            
+            for (int i = 0; i < segments.Count; i++)
+            {
+                var lookAt = i==0 ? null : segments[i - 1].transform;
+                var seg = segments[i];
+
+                Vector3[] pathArray = bodyPathsList[i].ToArray();
+                float duration = GetPathDistance(pathArray) / moveSpeed;
+                Debug.Log("PathArray : " + pathArray.Length + " Duration: " + duration);
+                if (i > 0)
+                {
+                    seg.transform.DOPath(pathArray, duration, PathType.CatmullRom).SetEase(Ease.Linear)
+                        .OnUpdate(() =>
+                        {
+                            if (lookAt != null)
+                                seg.transform.LookAt(lookAt);
+                        });
+                }
+                else
+                {
+                    seg.transform.DOPath(pathArray, duration, PathType.CatmullRom).SetEase(Ease.Linear)
+                        .SetLookAt(0);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Path not found");
+        }
+    }
+
+    private float GetPathDistance(Vector3[] pathArray)
+    {
+        float distance = 0;
+        for (int i = 0; i < pathArray.Length - 1; i++)
+        {
+            distance += Vector3.Distance(pathArray[i], pathArray[i + 1]);
+        }
+        return distance;
+    }
+
+
     private Vector3 moveTryPos;
     private void OnDrawGizmos()
     {
         //draw sphere at each position
         for (int i = 0; i < bodyPositions.Length; i++)
         {
-            Gizmos.color = i == 0 ? GameConfigs.instance.wormGizmoHeadColor : GameConfigs.instance.wormGizmoBodyColor;
+            Gizmos.color = i == 0 ? gameConfigs.wormGizmoHeadColor : gameConfigs.wormGizmoBodyColor;
             
             if(segments.Count > 0)
-                Gizmos.DrawSphere(segments[i].Pos + Vector3.up * 0.5f, GameConfigs.instance.wormGizmoSize);
+                Gizmos.DrawSphere(segments[i].Pos + Vector3.up * 0.5f, gameConfigs.wormGizmoSize);
             else
-                Gizmos.DrawSphere(new Vector3(bodyPositions[i].x, 0.5f, bodyPositions[i].y), GameConfigs.instance.wormGizmoSize);
+                Gizmos.DrawSphere(new Vector3(bodyPositions[i].x, 0.5f, bodyPositions[i].y), gameConfigs.wormGizmoSize);
         }
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(moveTryPos + Vector3.up, GameConfigs.instance.wormGizmoSize/2f);
+        Gizmos.DrawSphere(moveTryPos + Vector3.up, gameConfigs.wormGizmoSize/2f);
     }
 }

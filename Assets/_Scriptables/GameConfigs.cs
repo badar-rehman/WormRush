@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GameConfig", menuName = "Singletons/GameConfig")]
-public class GameConfigs : ScriptableSingleton<GameConfigs>
+public class GameConfigs : ScriptableObject
 {
     [BoxGroup("Touch")]
     public float touchSphereRadius = 0.5f;

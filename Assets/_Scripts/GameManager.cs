@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public Worm[] worms;
+    
+    public GameConfigs gameConfigs;
+    
     private void Awake()
     {
         instance = this;
@@ -17,11 +20,16 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         GridManager.instance.GenerateGrid();
+        CreateWorms();
+        GridManager.instance.SpawnObstacles();
+    }
+
+    private void CreateWorms()
+    {
         foreach (var worm in  worms)
         {
             worm.CreateWorm();
         }
-        GridManager.instance.SpawnObstacles();
     }
 
     public void Restart()

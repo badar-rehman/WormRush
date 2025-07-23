@@ -14,12 +14,19 @@ public class Tile : MonoBehaviour
     
     [SerializeField][ShowIf("_appearance", TileAppearance.ColorChange)] private Color _baseColor, _offsetColor;
     [SerializeField][ShowIf("_appearance", TileAppearance.MaterialChange)] private Material _baseMat, _offsetMat;
-    [SerializeField] private MeshRenderer _renderer;
+    [SerializeField] public MeshRenderer _renderer;
     
     [ReadOnly] public bool IsOccupied  = false;
+    [ReadOnly] public int x, y;
 
-    public void Init(bool isOffset)
+    public void Init(int _x, int _y)
     {
+        IsOccupied = false;
+        x = _x;
+        y = _y;
+        
+        bool isOffset = (x % 2 == 0 && y % 2 != 0) || (x % 2 != 0 && y % 2 == 0);
+        
         if(_appearance == TileAppearance.MaterialChange)
         {
             _renderer.material = isOffset ? _offsetMat : _baseMat;

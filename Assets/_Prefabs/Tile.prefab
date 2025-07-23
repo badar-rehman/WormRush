@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5186781694045393573}
   - component: {fileID: 5770894490043081274}
   - component: {fileID: 9054100756888264967}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,6 +54,8 @@ MonoBehaviour:
   _offsetMat: {fileID: 2100000, guid: f74a8a03431ed57408a9d1b8b32f0f42, type: 2}
   _renderer: {fileID: 1299527641008184799}
   IsOccupied: 0
+  x: 0
+  y: 0
 --- !u!65 &9054100756888264967
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -86,7 +88,7 @@ GameObject:
   - component: {fileID: 4026636579197867713}
   - component: {fileID: 4408086365161432217}
   - component: {fileID: 1299527641008184799}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +174,7 @@ GameObject:
   - component: {fileID: 3188056948085039371}
   - component: {fileID: 2951922510962277431}
   - component: {fileID: 6955240508079588358}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Highlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
