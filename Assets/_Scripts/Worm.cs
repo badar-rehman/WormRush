@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -9,15 +7,13 @@ public class Worm : MonoBehaviour
 {
     [SerializeField] WormSegment headPrefab;
     [SerializeField] WormSegment bodyPrefab;
-    [SerializeField] private int length = 4;
     
-    [FoldoutGroup("Movement")] public float moveDuration = 0.15f; // Smooth duration
-    [FoldoutGroup("Movement")] public float gridMoveThreshold = 50f; // Pixels to trigger move
-    [FoldoutGroup("Movement")] public float moveCooldown = 0.15f;
     [FoldoutGroup("Movement")][ReadOnly] private bool isMoving = false;
     
     [SerializeField] private Vector2Int[] bodyPositions;
     [SerializeField] [DisableIf("segments")] private List<WormSegment> segments = new List<WormSegment>();
+    
+    private int length = 4;
     
     public WormSegment HeadSeg => segments.Count > 0 ? segments[0] : null;
     public WormSegment TailSeg => segments.Count > 0 ? segments[^1] : null;
@@ -27,30 +23,20 @@ public class Worm : MonoBehaviour
     private List<Vector3> movePrevPositions = new List<Vector3>();
     private List<Vector3> moveNewPositions = new List<Vector3>();
     
-    #region Gizmos
-    [FoldoutGroup("Gizmos")]
-    [SerializeField] private Color gizmoHeadColor = Color.green;
-    [FoldoutGroup("Gizmos")]
-    [SerializeField] private Color gizmoBodyColor = Color.green;
-    [FoldoutGroup("Gizmos")]
-    [SerializeField] [Range(0f, 1f)] private float gizmoSize = 0.5f;
-    #endregion
-    
     
     [Button("Create Worm")]
     public void CreateWorm()
     {
         ClearWorm();
-
+        
         if (bodyPositions == null || bodyPositions.Length == 0)
         {
-            bodyPositions = new Vector2Int[length];
-            for (int i = 0; i < bodyPositions.Length; i++)
-            {
-                bodyPositions[i] = new Vector2Int(i, 0);
-            }
+            Debug.LogError("Worm body positions not set");
+            return;
         }
-
+        
+        length = bodyPositions.Length;
+        
         int segmentsToCreate = Mathf.Min(length, bodyPositions.Length);
 
         for (int i = 0; i < segmentsToCreate; i++)
@@ -109,7 +95,7 @@ public class Worm : MonoBehaviour
             yield break;
         }
         
-        float duration = moveDuration;
+        float duration = GameConfigs.instance.moveDuration;
         float elapsed = 0f;
         
         //Store previous positions
@@ -244,14 +230,14 @@ public class Worm : MonoBehaviour
         //draw sphere at each position
         for (int i = 0; i < bodyPositions.Length; i++)
         {
-            Gizmos.color = i == 0 ? gizmoHeadColor : gizmoBodyColor;
+            Gizmos.color = i == 0 ? GameConfigs.instance.wormGizmoHeadColor : GameConfigs.instance.wormGizmoBodyColor;
             
             if(segments.Count > 0)
-                Gizmos.DrawSphere(segments[i].Pos + Vector3.up * 0.5f, gizmoSize);
+                Gizmos.DrawSphere(segments[i].Pos + Vector3.up * 0.5f, GameConfigs.instance.wormGizmoSize);
             else
-                Gizmos.DrawSphere(new Vector3(bodyPositions[i].x, 0.5f, bodyPositions[i].y), gizmoSize);
+                Gizmos.DrawSphere(new Vector3(bodyPositions[i].x, 0.5f, bodyPositions[i].y), GameConfigs.instance.wormGizmoSize);
         }
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(moveTryPos + Vector3.up, gizmoSize/2f);
+        Gizmos.DrawSphere(moveTryPos + Vector3.up, GameConfigs.instance.wormGizmoSize/2f);
     }
 }

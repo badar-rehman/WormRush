@@ -31,42 +31,5 @@ public class WormSegment : MonoBehaviour
         isCloseToHead = _isCloseToHead;
     }
 
-    public void OnMouseDown()
-    {
-        isDragging = true;
-        mouseStartPos = Input.mousePosition;
-    }
-
-    public void OnMouseDrag()
-    {
-        if (!isDragging) return;
-
-        moveTimer += Time.deltaTime;
-        if (moveTimer < worm.moveCooldown) return;
-
-        Vector2 currentMousePos = Input.mousePosition;
-        Vector2 dragDelta = currentMousePos - mouseStartPos;
-
-        if (dragDelta.magnitude < worm.gridMoveThreshold) return;
-
-        Vector3 inputDir = Vector3.zero;
-
-        // Determine input direction in world (X-Z plane)
-        if (Mathf.Abs(dragDelta.x) > Mathf.Abs(dragDelta.y))
-            inputDir = dragDelta.x > 0 ? Vector3.right : Vector3.left;
-        else
-            inputDir = dragDelta.y > 0 ? Vector3.forward : Vector3.back;
-
-        worm.TryMove(inputDir, isCloseToHead);
-
-        // Reset drag for smooth continuous dragging
-        mouseStartPos = currentMousePos;
-        moveTimer = 0f;
-    }
-
-    public void OnMouseUp()
-    {
-        isDragging = false;
-        moveTimer = 0f;
-    }
+    public bool IsCloseToHead => isCloseToHead;
 }
