@@ -345,4 +345,63 @@ public class Worm : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(moveTryPos + Vector3.up, gameConfigs.wormGizmoSize/2f);
     }
+    
+    [Button("MoveToTile Step By Step")]
+    public bool MoveToTilestep(Tile targetTile)
+    {
+        if (isMoving || HeadSeg == null || targetTile == null)
+            return false;
+
+        StartCoroutine(MoveStepByStep(targetTile));
+        return true;
+    }
+
+    private IEnumerator MoveStepByStep(Tile destination)
+    {
+        isMoving = true;
+
+        while (HeadSeg.Pos != destination.transform.position)
+        {
+            // Find path every step
+            Tile currentTile = GridManager.instance.GetTileAtPosition(HeadSeg.Pos);
+            List<Tile> path = GridManager.instance.GetShortestPath(currentTile, destination);
+
+            if (path == null || path.Count < 2)
+            {
+                Debug.Log("No path or already at destination.");
+                break;
+            }
+
+            // Move one tile step (the next tile)
+            Tile nextTile = path[1];
+
+            Vector3 nextPos = nextTile.transform.position;
+            float stepDuration = Vector3.Distance(HeadSeg.Pos, nextPos) / moveSpeed;
+
+            // Move Head
+            Tween headTween = HeadSeg.transform.DOMove(nextPos, stepDuration).SetEase(Ease.Linear);
+            HeadSeg.transform.DOLookAt(nextPos, 0.1f);
+
+            // Update tile occupancy
+            GridManager.instance.GetTileAtPosition(HeadSeg.Pos)?.SetOccupied(false);
+            nextTile.SetOccupied(true);
+
+            // Move each segment to the previous one's position
+            List<Vector3> oldPositions = new List<Vector3>();
+            foreach (var seg in segments)
+                oldPositions.Add(seg.Pos);
+
+            for (int i = 1; i < segments.Count; i++)
+            {
+                Vector3 followPos = oldPositions[i - 1];
+                Tween t = segments[i].transform.DOMove(followPos, stepDuration).SetEase(Ease.Linear);
+                segments[i].transform.DOLookAt(oldPositions[i - 1], 0.1f);
+            }
+
+            // Wait until step finishes
+            yield return new WaitForSeconds(stepDuration);
+        }
+
+        isMoving = false;
+    }
 }
