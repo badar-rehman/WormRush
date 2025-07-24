@@ -48,14 +48,14 @@ public class TouchManager : MonoBehaviour
     void BeginTouch(Vector2 screenPos)
     {
         Ray ray = mainCamera.ScreenPointToRay(screenPos);
-        Debug.Log("BeginTouch " + screenPos);
+       // Debug.Log("BeginTouch " + screenPos);
         if (Physics.Raycast(ray, out RaycastHit hit, 200f, planeLayerMask))
         {
-            Debug.Log("Water hit " + hit.point + " " + hit.collider.gameObject.name);
+           // Debug.Log("Water hit " + hit.point + " " + hit.collider.gameObject.name);
             var pos = hit.point + Vector3.up * 0.5f;
             
             var cols = Physics.OverlapSphere(pos, gameConfigs.touchSphereRadius, gameConfigs.wormSegmentLayer);
-            Debug.Log("Cols " + cols.Length);
+          //  Debug.Log("Cols " + cols.Length);
             if (cols.Length > 0)
             {
                 selectedSegment = cols[0].GetComponent<WormSegment>();
@@ -81,7 +81,10 @@ public class TouchManager : MonoBehaviour
         if (currentTile && currentTile != selectedTile && !currentTile.IsOccupied)
         {
             selectedTile = currentTile;
-            selectedSegment.worm.MoveToTile(selectedTile);
+            if (selectedSegment.worm.MoveToTile(selectedTile))
+            {
+                selectedTile = currentTile;
+            }
         }
     }
 

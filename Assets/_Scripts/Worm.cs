@@ -45,7 +45,7 @@ public class Worm : MonoBehaviour
         {
             Vector3 position = new Vector3(bodyPositions[i].x, 0f, bodyPositions[i].y);
             WormSegment segment;
- 
+            
             if (i == 0)
             {
                 segment = Instantiate(headPrefab, position, Quaternion.identity, transform);
@@ -54,7 +54,9 @@ public class Worm : MonoBehaviour
             {
                 segment = Instantiate(bodyPrefab, position, Quaternion.identity, transform);
             }
- 
+            
+            movePrevPositions.Add(position);
+            
             segment.Setup(this, i, i < segmentsToCreate/2);
             segments.Add(segment);
  
@@ -63,13 +65,6 @@ public class Worm : MonoBehaviour
             tile?.SetOccupied(true);
         }
         
-        //Set head rotation
-        // if (segments.Count > 1)
-        // {
-        //     Vector3 directionToSecondSegment = segments[0].LPos - segments[1].LPos;
-        //     Quaternion headRotation = Quaternion.LookRotation(-directionToSecondSegment);
-        //     segments[0].transform.localEulerAngles = headRotation.eulerAngles + new Vector3(0, 180, 0);
-        // }
         Vector3 direction = HeadSeg.Pos - segments[1].Pos;
         HeadSeg.transform.LookAt(HeadSeg.Pos + direction);
         for (int i = 1; i < segments.Count; i++)
@@ -81,6 +76,7 @@ public class Worm : MonoBehaviour
     private void ClearWorm()
     {
         segments.Clear();
+        movePrevPositions.Clear();
     }
     
     private IEnumerator MoveCoroutine(Vector3 newPos, bool fromHead, bool forward)
@@ -228,18 +224,28 @@ public class Worm : MonoBehaviour
  
     public float moveSpeed = 1f;
     private List<List<Vector3>> bodyPathsList;
+    public Tween moveTween = null;
     [Button("MoveToTile")]
-    public void MoveToTile(Tile tile)
+    public bool MoveToTile(Tile tile)
     {
+        if (moveTween != null && moveTween.IsPlaying())
+        {
+            return false;
+        }
+        
         var startTile = GridManager.instance.GetTileAtPosition(HeadSeg.Pos);
-        startTile.IsOccupied = false;
+        
+        GridManager.instance.GetTileAtPosition(movePrevPositions[0]).IsOccupied = false;
+        
         List<Tile> path = GridManager.instance.GetShortestPath(startTile, tile);
+        
         List<Vector3> tilePosPath = new List<Vector3>();
+        
         if (path != null)
         {
-            if (path.Count <= 0) return;
+            if (path.Count <= 0) return false;
             
-            Debug.Log("Path: " + path.Count);
+          //  Debug.Log("Path: " + path.Count);
             
             foreach(var _tile in path)
                 tilePosPath.Add(_tile.transform.position);
@@ -251,6 +257,7 @@ public class Worm : MonoBehaviour
             
             for (int i = 1; i < segments.Count; i++)
             {
+                GridManager.instance.GetTileAtPosition(movePrevPositions[i]).IsOccupied = false;
                 List<Vector3> segPosPath = new List<Vector3>();
                 
                 foreach (var poss in tilePosPath)
@@ -269,7 +276,10 @@ public class Worm : MonoBehaviour
                 
                 bodyPathsList.Add(segPosPath);
             }
+            
+            
             float duration = GetPathDistance(segments[0].Pos,bodyPathsList[0].ToArray()) / moveSpeed;
+            movePrevPositions.Clear();
             for (int i = 0; i < segments.Count; i++)
             {
                 var lookAt = i==0 ? null : segments[i - 1].transform;
@@ -277,10 +287,13 @@ public class Worm : MonoBehaviour
  
                 Vector3[] pathArray = bodyPathsList[i].ToArray();
                 // float duration = GetPathDistance(seg.Pos,pathArray) / moveSpeed;
-                Debug.Log("PathArray : " + pathArray.Length + " Duration: " + duration);
+                // Debug.Log("PathArray : " + pathArray.Length + " Duration: " + duration);
+                GridManager.instance.GetTileAtPosition(seg.Pos).IsOccupied = false;
+                GridManager.instance.GetTileAtPosition(pathArray[^1]).IsOccupied = true;
+                movePrevPositions.Add(pathArray[^1]);
                 if (i > 0)
                 {
-                    seg.transform.DOPath(pathArray, duration, PathType.CatmullRom).SetEase(Ease.Linear)
+                    moveTween = seg.transform.DOPath(pathArray, duration, gizmoColor: Color.magenta).SetEase(Ease.Linear)
                         .OnUpdate(() =>
                         {
                             if (lookAt != null)
@@ -289,14 +302,17 @@ public class Worm : MonoBehaviour
                 }
                 else
                 {
-                    seg.transform.DOPath(pathArray, duration, PathType.CatmullRom).SetEase(Ease.Linear)
+                    seg.transform.DOPath(pathArray, duration, gizmoColor: Color.magenta).SetEase(Ease.Linear)
                         .SetLookAt(0.1f);
                 }
             }
+            return true;
         }
         else
         {
-            Debug.Log("Path not found");
+          //  Debug.Log("Path not found");
+            GridManager.instance.GetTileAtPosition(movePrevPositions[0]).IsOccupied = true;
+            return false;
         }
     }
  
