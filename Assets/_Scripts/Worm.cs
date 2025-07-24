@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
-
+ 
 public class Worm : MonoBehaviour
 {
     [SerializeField] WormSegment headPrefab;
@@ -18,12 +18,12 @@ public class Worm : MonoBehaviour
     
     public WormSegment HeadSeg => segments.Count > 0 ? segments[0] : null;
     public WormSegment TailSeg => segments.Count > 0 ? segments[^1] : null;
-
+ 
     public bool IsMoving() => isMoving;
     
     private List<Vector3> movePrevPositions = new List<Vector3>();
     private List<Vector3> moveNewPositions = new List<Vector3>();
-
+ 
     [SerializeField] private GameConfigs gameConfigs;
     
     [Button("Create Worm")]
@@ -40,12 +40,12 @@ public class Worm : MonoBehaviour
         length = bodyPositions.Length;
         
         int segmentsToCreate = Mathf.Min(length, bodyPositions.Length);
-
+ 
         for (int i = 0; i < segmentsToCreate; i++)
         {
             Vector3 position = new Vector3(bodyPositions[i].x, 0f, bodyPositions[i].y);
             WormSegment segment;
-
+ 
             if (i == 0)
             {
                 segment = Instantiate(headPrefab, position, Quaternion.identity, transform);
@@ -54,10 +54,10 @@ public class Worm : MonoBehaviour
             {
                 segment = Instantiate(bodyPrefab, position, Quaternion.identity, transform);
             }
-
+ 
             segment.Setup(this, i, i < segmentsToCreate/2);
             segments.Add(segment);
-
+ 
             // Mark tile as occupied
             var tile = GridManager.instance.GetTileAtPosition(new Vector3(position.x, 0f,position.z));
             tile?.SetOccupied(true);
@@ -77,7 +77,7 @@ public class Worm : MonoBehaviour
             segments[i].transform.LookAt(segments[i - 1].Pos);
         }
     }
-
+ 
     private void ClearWorm()
     {
         segments.Clear();
@@ -87,9 +87,9 @@ public class Worm : MonoBehaviour
     {
         moveTryPos = newPos;
         isMoving = true;
-
+ 
         Vector3Int gridPos = Vector3Int.RoundToInt(newPos);
-
+ 
         Tile targetTile = GridManager.instance.GetTileAtPosition(gridPos);
         if (targetTile == null || targetTile.IsOccupied)
         {
@@ -114,12 +114,12 @@ public class Worm : MonoBehaviour
             else // move from tail
                 moveNewPositions.Add(i == segments.Count - 1 ? newPos : movePrevPositions[i + 1]);
         }
-
+ 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-
+ 
             for (int i = 0; i < segments.Count; i++)
             {
                 if (fromHead)
@@ -149,10 +149,10 @@ public class Worm : MonoBehaviour
                     }
                 }
             }
-
+ 
             yield return null;
         }
-
+ 
         // Final snapping
         if (fromHead)
         {
@@ -166,7 +166,7 @@ public class Worm : MonoBehaviour
             for (int i = 0; i < segments.Count - 1; i++)
                 segments[i].transform.position = movePrevPositions[i + 1];
         }
-
+ 
         foreach (var prevPos in movePrevPositions)
         {
             GridManager.instance.GetTileAtPosition(prevPos).IsOccupied = false;
@@ -175,10 +175,10 @@ public class Worm : MonoBehaviour
         {
             GridManager.instance.GetTileAtPosition(newSegPos.Pos).IsOccupied = true;
         }
-
+ 
         isMoving = false;
     }
-
+ 
     public void TryMove(Vector3 inputDir, bool isCloseToHead)
     {
         if (isCloseToHead) //dragging from head
@@ -225,7 +225,7 @@ public class Worm : MonoBehaviour
             }
         }
     }
-
+ 
     public float moveSpeed = 1f;
     private List<List<Vector3>> bodyPathsList;
     [Button("MoveToTile")]
@@ -237,6 +237,8 @@ public class Worm : MonoBehaviour
         List<Vector3> tilePosPath = new List<Vector3>();
         if (path != null)
         {
+            if (path.Count <= 0) return;
+            
             Debug.Log("Path: " + path.Count);
             
             foreach(var _tile in path)
@@ -267,14 +269,14 @@ public class Worm : MonoBehaviour
                 
                 bodyPathsList.Add(segPosPath);
             }
-            
+            float duration = GetPathDistance(segments[0].Pos,bodyPathsList[0].ToArray()) / moveSpeed;
             for (int i = 0; i < segments.Count; i++)
             {
                 var lookAt = i==0 ? null : segments[i - 1].transform;
                 var seg = segments[i];
-
+ 
                 Vector3[] pathArray = bodyPathsList[i].ToArray();
-                float duration = GetPathDistance(pathArray) / moveSpeed;
+                // float duration = GetPathDistance(seg.Pos,pathArray) / moveSpeed;
                 Debug.Log("PathArray : " + pathArray.Length + " Duration: " + duration);
                 if (i > 0)
                 {
@@ -288,7 +290,7 @@ public class Worm : MonoBehaviour
                 else
                 {
                     seg.transform.DOPath(pathArray, duration, PathType.CatmullRom).SetEase(Ease.Linear)
-                        .SetLookAt(0);
+                        .SetLookAt(0.1f);
                 }
             }
         }
@@ -297,18 +299,20 @@ public class Worm : MonoBehaviour
             Debug.Log("Path not found");
         }
     }
-
-    private float GetPathDistance(Vector3[] pathArray)
+ 
+    private float GetPathDistance(Vector3 pos,Vector3[] pathArray)
     {
-        float distance = 0;
+        if (pathArray.Length == 0) return 0;
+        
+        float distance = Vector3.Distance(pos, pathArray[0]);
         for (int i = 0; i < pathArray.Length - 1; i++)
         {
             distance += Vector3.Distance(pathArray[i], pathArray[i + 1]);
         }
         return distance;
     }
-
-
+ 
+ 
     private Vector3 moveTryPos;
     private void OnDrawGizmos()
     {

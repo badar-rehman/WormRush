@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4615020114367687676}
   - component: {fileID: -2554608730948908840}
   - component: {fileID: 163316549293894774}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WormSegment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 2513547805920276002}
   - component: {fileID: 596960457365334880}
   - component: {fileID: 3145812089339553284}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 1877835430799073035}
   - component: {fileID: 4141251344860162482}
   - component: {fileID: 5069505362782096387}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}

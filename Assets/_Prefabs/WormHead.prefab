@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5391259411836431063}
   - component: {fileID: 7613145630845956068}
   - component: {fileID: 3691429900189235213}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 6568681933518844502}
   - component: {fileID: 4535389685753602365}
   - component: {fileID: 8735094002821219598}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WormHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,6 +133,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worm: {fileID: 0}
+  segmentIndex: 0
+  isCloseToHead: 0
 --- !u!135 &8735094002821219598
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -165,7 +167,7 @@ GameObject:
   - component: {fileID: 8985761724870527363}
   - component: {fileID: 1001550913643476607}
   - component: {fileID: 201336464804520505}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -253,7 +255,7 @@ GameObject:
   - component: {fileID: 7142896412410245809}
   - component: {fileID: 1726399473095881505}
   - component: {fileID: 6978453773835079275}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: eye (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
