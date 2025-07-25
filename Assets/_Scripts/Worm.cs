@@ -348,63 +348,141 @@ public class Worm : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(moveTryPos + Vector3.up, gameConfigs.wormGizmoSize/2f);
     }
-    
-    [Button("MoveToTile Step By Step")]
-    public bool MoveToTilestep(Tile targetTile)
-    {
-        if (isMoving || HeadSeg == null || targetTile == null)
-            return false;
 
-        StartCoroutine(MoveStepByStep(targetTile));
-        return true;
+
+    public Tile targetTile;
+
+    public void SetTargetTile(Tile tile)
+    {
+        if (targetTile == tile) return;
+        Debug.Log("SetTargetTile " + tile.transform.position);
+        targetTile = tile;
     }
 
-    private IEnumerator MoveStepByStep(Tile destination)
+    private Tile currentTargetTile;
+    // private bool lerping = false;
+    private List<Tile> headPath = new List<Tile>();
+    private List<Tile> tailPath = new List<Tile>();
+    List<Vector3> prevBodyPos  = new List<Vector3>();
+    private Vector3 nextStepPos;
+    public enum WormMoveState
     {
-        isMoving = true;
-
-        while (HeadSeg.Pos != destination.transform.position)
+        Idle,
+        Forward,
+        Backward,
+    }
+    WormMoveState moveState = WormMoveState.Idle;
+    public float rotSpeed = 10;
+    void Update()
+    {
+        if (moveState == WormMoveState.Idle && targetTile != null && currentTargetTile != targetTile)
         {
-            // Find path every step
-            Tile currentTile = GridManager.instance.GetTileAtPosition(HeadSeg.Pos);
-            List<Tile> path = GridManager.instance.GetShortestPath(currentTile, destination);
-
-            if (path == null || path.Count < 2)
+            Debug.Log("SetCurrentTile " + targetTile.transform.position);
+            currentTargetTile = targetTile;
+            
+            Tile headTile = GridManager.instance.GetTileAtPosition(HeadSeg.Pos);
+            if (headTile != null)
             {
-                Debug.Log("No path or already at destination.");
-                break;
+                headTile.IsOccupied = false;
+                headPath = GridManager.instance.GetShortestPath(headTile, currentTargetTile);
+                headTile.IsOccupied = true;
+                if (headPath != null && headPath.Count > 0)
+                {
+                    moveState = WormMoveState.Forward;
+                    for (int i = 0; i < segments.Count; i++)
+                    {
+                        prevBodyPos.Add(segments[i].Pos);
+                    }        
+                    nextStepPos = headPath[0].transform.position;
+                }
+                else
+                {
+                    Tile tailTile = GridManager.instance.GetTileAtPosition(TailSeg.Pos);
+                    if (tailTile != null)
+                    {
+                        tailTile.IsOccupied = false;
+                        headPath = GridManager.instance.GetShortestPath(tailTile, currentTargetTile);
+                        tailTile.IsOccupied = true;
+                        if (headPath != null && headPath.Count > 0)
+                        {
+                            moveState = WormMoveState.Backward;
+                            for (int i = 0; i < segments.Count; i++)
+                            {
+                                prevBodyPos.Add(segments[i].Pos);
+                            }        
+                            nextStepPos = headPath[0].transform.position;
+                        }
+                    }
+                }
             }
-
-            // Move one tile step (the next tile)
-            Tile nextTile = path[1];
-
-            Vector3 nextPos = nextTile.transform.position;
-            float stepDuration = Vector3.Distance(HeadSeg.Pos, nextPos) / moveSpeed;
-
-            // Move Head
-            Tween headTween = HeadSeg.transform.DOMove(nextPos, stepDuration).SetEase(Ease.Linear);
-            HeadSeg.transform.DOLookAt(nextPos, 0.1f);
-
-            // Update tile occupancy
-            GridManager.instance.GetTileAtPosition(HeadSeg.Pos)?.SetOccupied(false);
-            nextTile.SetOccupied(true);
-
-            // Move each segment to the previous one's position
-            List<Vector3> oldPositions = new List<Vector3>();
-            foreach (var seg in segments)
-                oldPositions.Add(seg.Pos);
-
-            for (int i = 1; i < segments.Count; i++)
+            else
             {
-                Vector3 followPos = oldPositions[i - 1];
-                Tween t = segments[i].transform.DOMove(followPos, stepDuration).SetEase(Ease.Linear);
-                segments[i].transform.DOLookAt(oldPositions[i - 1], 0.1f);
+                Debug.Log("Head tile is null");
             }
-
-            // Wait until step finishes
-            yield return new WaitForSeconds(stepDuration);
+            
+            
         }
 
-        isMoving = false;
+        if (moveState == WormMoveState.Forward)
+        {
+            for (int i = 0; i < segments.Count; i++)
+            {
+                Vector3 movePos = i == 0 ? nextStepPos : prevBodyPos[i - 1];
+                segments[i].Pos = 
+                    Vector3.MoveTowards(segments[i].Pos, movePos, Time.deltaTime * moveSpeed);
+                
+                // Calculate direction to next position
+                Vector3 direction = i==0? (movePos - segments[i].Pos).normalized : (prevBodyPos[i - 1] - segments[i].Pos).normalized;
+                if (direction != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                    segments[i].transform.rotation = Quaternion.Slerp(
+                        segments[i].transform.rotation, 
+                        targetRotation, 
+                        1f - Vector3.Distance(HeadSeg.Pos, nextStepPos)
+                    );
+                }
+            }
+            if (Vector3.Distance(HeadSeg.Pos, nextStepPos) == 0f)
+            {
+                moveState = WormMoveState.Idle;
+                headPath.Clear();
+                headPath = null;
+                currentTargetTile = null;
+                GridManager.instance.GetTileAtPosition(HeadSeg.Pos).IsOccupied = true;
+                GridManager.instance.GetTileAtPosition(prevBodyPos[^1]).IsOccupied = false;
+                prevBodyPos.Clear();
+            }
+
+            if (HeadSeg.Pos == targetTile.transform.position)
+            {
+                targetTile = null;
+            }
+        }
+        else if (moveState == WormMoveState.Backward)
+        {
+            for (int i = 0; i < segments.Count; i++)
+            {
+                Vector3 movePos = i == segments.Count - 1 ? nextStepPos : prevBodyPos[i + 1];
+                segments[i].Pos = 
+                    Vector3.MoveTowards(segments[i].Pos, movePos, Time.deltaTime * moveSpeed);
+                
+                segments[i].transform.forward = Vector3.RotateTowards(segments[i].transform.forward, movePos, Time.deltaTime * rotSpeed, 10);
+            }
+            if (Vector3.Distance(TailSeg.Pos, nextStepPos) == 0f)
+            {
+                moveState = WormMoveState.Idle;
+                headPath.Clear();
+                headPath = null;
+                currentTargetTile = null;
+                GridManager.instance.GetTileAtPosition(TailSeg.Pos).IsOccupied = true;
+                GridManager.instance.GetTileAtPosition(prevBodyPos[0]).IsOccupied = false;
+                prevBodyPos.Clear();
+            }
+            if (TailSeg.Pos == targetTile.transform.position)
+            {
+                targetTile = null;
+            }
+        }
     }
 }
