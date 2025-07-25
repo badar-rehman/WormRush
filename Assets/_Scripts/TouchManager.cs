@@ -80,8 +80,7 @@ public class TouchManager : MonoBehaviour
 
         if (currentTile && currentTile != selectedTile && !currentTile.IsOccupied)
         {
-            selectedTile = currentTile;
-            if (selectedSegment.worm.MoveToTilestep(selectedTile))
+            if (selectedSegment.worm.MoveToTile(currentTile))
             {
                 selectedTile = currentTile;
             }

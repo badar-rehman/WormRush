@@ -293,7 +293,7 @@ public class Worm : MonoBehaviour
                 movePrevPositions.Add(pathArray[^1]);
                 if (i > 0)
                 {
-                    moveTween = seg.transform.DOPath(pathArray, duration, gizmoColor: Color.magenta).SetEase(Ease.Linear)
+                    seg.transform.DOPath(pathArray, duration, gizmoColor: Color.magenta).SetEase(Ease.Linear)
                         .OnUpdate(() =>
                         {
                             if (lookAt != null)
@@ -302,8 +302,11 @@ public class Worm : MonoBehaviour
                 }
                 else
                 {
-                    seg.transform.DOPath(pathArray, duration, gizmoColor: Color.magenta).SetEase(Ease.Linear)
-                        .SetLookAt(0.1f);
+                    moveTween = seg.transform.DOPath(pathArray, duration, gizmoColor: Color.magenta).SetEase(Ease.Linear)
+                        .SetLookAt(0.1f).OnComplete(() =>
+                        {
+                            moveTween = null;
+                        });
                 }
             }
             return true;
