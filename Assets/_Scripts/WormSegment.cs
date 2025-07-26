@@ -4,7 +4,7 @@ using UnityEngine;
 public class WormSegment : MonoBehaviour
 {
     public Worm worm;
-    
+
     [SerializeField] [ReadOnly] private int segmentIndex;
     [SerializeField] [ReadOnly] private bool isCloseToHead;
     

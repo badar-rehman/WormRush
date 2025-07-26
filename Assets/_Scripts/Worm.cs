@@ -30,6 +30,8 @@ public class Worm : MonoBehaviour
     public void CreateWorm()
     {
         ClearWorm();
+        lineRenderer = GetComponent<LineRenderer>();
+        
         
         if (bodyPositions == null || bodyPositions.Length == 0)
         {
@@ -71,6 +73,8 @@ public class Worm : MonoBehaviour
         {
             segments[i].transform.LookAt(segments[i - 1].Pos);
         }
+        lineRenderer.positionCount = segments.Count;
+        UpdateLineRend();
     }
  
     private void ClearWorm()
@@ -373,6 +377,9 @@ public class Worm : MonoBehaviour
     }
     WormMoveState moveState = WormMoveState.Idle;
     public float rotSpeed = 10;
+    private float totalStepDistance;
+    private float coveredStepDistance;
+    LineRenderer lineRenderer;
     void Update()
     {
         if (moveState == WormMoveState.Idle && targetTile != null && currentTargetTile != targetTile)
@@ -386,41 +393,48 @@ public class Worm : MonoBehaviour
                 headTile.IsOccupied = false;
                 headPath = GridManager.instance.GetShortestPath(headTile, currentTargetTile);
                 headTile.IsOccupied = true;
-                if (headPath != null && headPath.Count > 0)
+            }
+            
+            Tile tailTile = GridManager.instance.GetTileAtPosition(TailSeg.Pos);
+            if (tailTile != null)
+            {
+                tailTile.IsOccupied = false;
+                tailPath = GridManager.instance.GetShortestPath(tailTile, currentTargetTile);
+                tailTile.IsOccupied = true;
+            }
+
+            for (int i = 0; i < segments.Count; i++)
+            {
+                prevBodyPos.Add(segments[i].Pos);
+            }
+
+            if (headPath != null && tailPath != null && headPath.Count > 0 && tailPath.Count > 0)
+            {
+                if (headPath.Count <= tailPath.Count)
                 {
                     moveState = WormMoveState.Forward;
-                    for (int i = 0; i < segments.Count; i++)
-                    {
-                        prevBodyPos.Add(segments[i].Pos);
-                    }        
                     nextStepPos = headPath[0].transform.position;
+                    totalStepDistance = Vector3.Distance(nextStepPos, HeadSeg.Pos);
                 }
                 else
                 {
-                    Tile tailTile = GridManager.instance.GetTileAtPosition(TailSeg.Pos);
-                    if (tailTile != null)
-                    {
-                        tailTile.IsOccupied = false;
-                        headPath = GridManager.instance.GetShortestPath(tailTile, currentTargetTile);
-                        tailTile.IsOccupied = true;
-                        if (headPath != null && headPath.Count > 0)
-                        {
-                            moveState = WormMoveState.Backward;
-                            for (int i = 0; i < segments.Count; i++)
-                            {
-                                prevBodyPos.Add(segments[i].Pos);
-                            }        
-                            nextStepPos = headPath[0].transform.position;
-                        }
-                    }
+                    moveState = WormMoveState.Backward;
+                    nextStepPos = tailPath[0].transform.position;
+                    totalStepDistance = Vector3.Distance(nextStepPos, TailSeg.Pos);
                 }
             }
-            else
+            else if (headPath != null && headPath.Count > 0)
             {
-                Debug.Log("Head tile is null");
+                moveState = WormMoveState.Forward;
+                nextStepPos = headPath[0].transform.position;
+                totalStepDistance = Vector3.Distance(nextStepPos, HeadSeg.Pos);
             }
-            
-            
+            else if (tailPath != null && tailPath.Count > 0)
+            {
+                moveState = WormMoveState.Backward;
+                nextStepPos = tailPath[0].transform.position;
+                totalStepDistance = Vector3.Distance(nextStepPos, TailSeg.Pos);
+            }
         }
 
         if (moveState == WormMoveState.Forward)
@@ -431,6 +445,8 @@ public class Worm : MonoBehaviour
                 segments[i].Pos = 
                     Vector3.MoveTowards(segments[i].Pos, movePos, Time.deltaTime * moveSpeed);
                 
+                coveredStepDistance = totalStepDistance - Vector3.Distance(segments[i].Pos, movePos);
+                
                 // Calculate direction to next position
                 Vector3 direction = i==0? (movePos - segments[i].Pos).normalized : (prevBodyPos[i - 1] - segments[i].Pos).normalized;
                 if (direction != Vector3.zero)
@@ -439,7 +455,7 @@ public class Worm : MonoBehaviour
                     segments[i].transform.rotation = Quaternion.Slerp(
                         segments[i].transform.rotation, 
                         targetRotation, 
-                        1f - Vector3.Distance(HeadSeg.Pos, nextStepPos)
+                        coveredStepDistance/totalStepDistance
                     );
                 }
             }
@@ -453,27 +469,40 @@ public class Worm : MonoBehaviour
                 GridManager.instance.GetTileAtPosition(prevBodyPos[^1]).IsOccupied = false;
                 prevBodyPos.Clear();
             }
-
             if (HeadSeg.Pos == targetTile.transform.position)
             {
                 targetTile = null;
             }
+            UpdateLineRend();
         }
         else if (moveState == WormMoveState.Backward)
         {
+            
             for (int i = 0; i < segments.Count; i++)
             {
                 Vector3 movePos = i == segments.Count - 1 ? nextStepPos : prevBodyPos[i + 1];
                 segments[i].Pos = 
                     Vector3.MoveTowards(segments[i].Pos, movePos, Time.deltaTime * moveSpeed);
                 
-                segments[i].transform.forward = Vector3.RotateTowards(segments[i].transform.forward, movePos, Time.deltaTime * rotSpeed, 10);
+                coveredStepDistance = totalStepDistance - Vector3.Distance(segments[i].Pos, movePos);
+                
+                // Calculate direction to next position
+                Vector3 direction = i==0 ? -(movePos - segments[i].Pos).normalized : (segments[i].Pos - prevBodyPos[i - 1]).normalized;
+                if (direction != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                    segments[i].transform.rotation = Quaternion.Slerp(
+                        segments[i].transform.rotation, 
+                        targetRotation, 
+                        coveredStepDistance/totalStepDistance
+                    );
+                }
             }
             if (Vector3.Distance(TailSeg.Pos, nextStepPos) == 0f)
             {
                 moveState = WormMoveState.Idle;
-                headPath.Clear();
-                headPath = null;
+                tailPath.Clear();
+                tailPath = null;
                 currentTargetTile = null;
                 GridManager.instance.GetTileAtPosition(TailSeg.Pos).IsOccupied = true;
                 GridManager.instance.GetTileAtPosition(prevBodyPos[0]).IsOccupied = false;
@@ -483,6 +512,13 @@ public class Worm : MonoBehaviour
             {
                 targetTile = null;
             }
+            UpdateLineRend();
         }
+    }
+
+    private void UpdateLineRend()
+    {
+        for (int i = 0; i < segments.Count; i++)
+            lineRenderer.SetPosition(i, segments[i].Pos);
     }
 }

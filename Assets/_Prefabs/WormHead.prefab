@@ -133,6 +133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worm: {fileID: 0}
+  trailRend: {fileID: 0}
   segmentIndex: 0
   isCloseToHead: 0
 --- !u!135 &8735094002821219598
