@@ -19,6 +19,9 @@ public class GameConfigs : ScriptableObject
 
     [BoxGroup("Movement")]
     public float moveDuration = 0.05f;
+    
+    [BoxGroup("Movement")]
+    public float moveSpeed = 7f;
 
     #region WormGizmos
     [BoxGroup("Gizmos")]

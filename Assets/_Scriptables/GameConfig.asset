@@ -19,6 +19,7 @@ MonoBehaviour:
   moveCooldown: 0
   gridMoveThreshold: 25
   moveDuration: 0.05
-  wormGizmoHeadColor: {r: 0, g: 0, b: 1, a: 1}
-  wormGizmoBodyColor: {r: 0, g: 1, b: 0, a: 1}
+  moveSpeed: 7
+  wormGizmoHeadColor: {r: 0, g: 0, b: 1, a: 0.26666668}
+  wormGizmoBodyColor: {r: 0, g: 1, b: 0, a: 0.16862746}
   wormGizmoSize: 0.5

@@ -2,16 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Sirenix.OdinInspector;
+using SplineMesh;
 using UnityEngine;
  
 public class Worm : MonoBehaviour
 {
+    public Spline spline;
     [SerializeField] WormSegment headPrefab;
     [SerializeField] WormSegment bodyPrefab;
     
     [FoldoutGroup("Movement")][ReadOnly] private bool isMoving = false;
     
-    [SerializeField] private Vector2Int[] bodyPositions;
+    [SerializeField] public Vector2Int[] bodyPositions;
     [SerializeField] [DisableIf("segments")] private List<WormSegment> segments = new List<WormSegment>();
     
     private int length = 4;
@@ -226,7 +228,7 @@ public class Worm : MonoBehaviour
         }
     }
  
-    public float moveSpeed = 1f;
+    public float moveSpeed => gameConfigs.moveSpeed;
     private List<List<Vector3>> bodyPathsList;
     public Tween moveTween = null;
     [Button("MoveToTile")]
@@ -518,7 +520,17 @@ public class Worm : MonoBehaviour
 
     private void UpdateLineRend()
     {
+        UpdateSpline();
+        // for (int i = 0; i < segments.Count; i++)
+        //     lineRenderer.SetPosition(i, segments[i].Pos);
+    }
+
+    void UpdateSpline()
+    {
         for (int i = 0; i < segments.Count; i++)
-            lineRenderer.SetPosition(i, segments[i].Pos);
+        {
+            spline.nodes[i].Position = segments[i].Pos + Vector3.up * 0.5f;
+            spline.nodes[i].Up = segments[i].transform.up;
+        }
     }
 }

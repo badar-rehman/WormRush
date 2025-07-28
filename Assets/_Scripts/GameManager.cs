@@ -1,6 +1,8 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,6 +10,9 @@ public class GameManager : MonoBehaviour
     public Worm[] worms;
     
     public GameConfigs gameConfigs;
+
+    public Slider speedSlider;
+    public TextMeshProUGUI speedText;
     
     private void Awake()
     {
@@ -15,6 +20,15 @@ public class GameManager : MonoBehaviour
         
         //set target frame rate
         Application.targetFrameRate = 60;
+        
+        speedSlider.value = gameConfigs.moveSpeed;
+        speedText.text = "Speed: " + gameConfigs.moveSpeed.ToString();
+        
+        speedSlider.onValueChanged.AddListener(x =>
+        {
+            gameConfigs.moveSpeed = x;
+            speedText.text = "Speed: " + x.ToString();
+        });
     }
 
     private void Start()
